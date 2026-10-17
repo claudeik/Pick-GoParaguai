@@ -55,12 +55,12 @@
           <span class="brand-monogram">P&amp;G</span>
         </div>
         <div class="brand-title">
-          <span class="brand-eyebrow">PORTAL PARAGUAI · INVESTMENT GRADE (Baa3) · FINTECH &amp; REAL ESTATE</span>
+          <span class="brand-eyebrow">PORTAL PARAGUAI · IN-STORE &amp; CROSS-BORDER FINTECH</span>
           <h1>
-            Portal Paraguai · Real Estate &amp; Pick&amp;Go
-            <span class="brand-pill">Zuvia · CVM 88 · B3</span>
+            Pick &amp; Go
+            <span class="brand-pill">Piloto CDE · v0.1</span>
           </h1>
-          <span class="brand-subtitle">Tokens Imobiliários em Assunção (Villa Morra &amp; La Galería) c/ Renda em US$ + Plataforma Pick &amp; Go via Pix Câmbio Real</span>
+          <span class="brand-subtitle">80+ Lojas em Ciudad del Este · Checkout Pix via Câmbio Real · Split 90% Loja / 7% Portal / 3% EPYX</span>
         </div>
       </div>
 
@@ -84,13 +84,10 @@
       </div>
     </div>
 
-    <!-- Navegação Principal por Módulos (Real Estate Zuvia/CVM/B3 + Pick & Go T1 a T30) -->
+    <!-- Navegação Principal por Atores e Módulos (Telas T1 a T30) -->
     <div class="persona-nav-wrapper">
-      <nav class="persona-nav" aria-label="Módulos do Ecossistema Portal Paraguai">
-        <button type="button" class="nav-tab active" data-view="imobiliario">
-          🏛️ Imóveis Tokenizados PY <span class="tab-badge">Villa Morra · Zuvia · CVM · B3</span>
-        </button>
-        <button type="button" class="nav-tab" data-view="turista">
+      <nav class="persona-nav" aria-label="Módulos do Sistema Pick & Go">
+        <button type="button" class="nav-tab active" data-view="turista">
           🛍️ App do Turista <span class="tab-badge">T1–T8 · T11–T19 · T27</span>
         </button>
         <button type="button" class="nav-tab" data-view="video">
@@ -114,7 +111,7 @@
 
   <!-- Conteúdo Principal Renderizado Dinamicamente com View Transitions -->
   <main class="main-container" id="mainViewContainer">
-    <h2 id="view-heading" tabindex="-1" style="position:absolute;left:-9999px;">Portal Paraguai Real Estate &amp; Pick &amp; Go</h2>
+    <h2 id="view-heading" tabindex="-1" style="position:absolute;left:-9999px;">Portal Paraguai Pick &amp; Go</h2>
     <div id="appContent"></div>
   </main>
 
@@ -145,27 +142,17 @@
     <div class="dialog-body" id="pixDialogBody"></div>
   </dialog>
 
-  <!-- Modal Nativo <dialog> para Subscrição de Token Imobiliário Zuvia / CVM 88 & Dossiê do Prédio -->
-  <dialog class="modern-dialog" id="zuviaInvestDialog" closedby="any" aria-labelledby="zuviaDialogTitle" style="max-width:780px;">
-    <div class="dialog-header">
-      <h3 id="zuviaDialogTitle">🏛️ Subscrição de Token Imobiliário (Zuvia · Res. CVM 88 · Infra B3)</h3>
-      <button type="button" class="btn btn-sm btn-outline" id="btnCloseZuviaDialog" onclick="document.getElementById('zuviaInvestDialog').close()">Fechar ✕</button>
-    </div>
-    <div class="dialog-body" id="zuviaDialogBody"></div>
-  </dialog>
-
   <!-- Pilha de Notificações Toast com Popover API (popover="manual") -->
   <div class="toast-stack" id="toastStack" aria-live="polite"></div>
 
-  <!-- Rodapé Executivo Azul Escuro -->
+  <!-- Rodapé com as Cores do Paraguai -->
   <div class="paraguay-tricolor-bar" role="presentation"></div>
   <footer class="app-footer">
     <p>
-      <strong>Portal Paraguai · Real Estate Tokenization (Assunção · Villa Morra &amp; Paseo La Galería) &amp; Pick &amp; Go</strong> — Especificação v0.1 (17/10/2026) · Oferta Regulada via Zuvia (Res. CVM 88) &amp; Infraestrutura B3 · Liquidação Pix via Câmbio Real
+      <strong>Portal Paraguai · Pick &amp; Go</strong> — Especificação v0.1 (17/10/2026) · Piloto Ciudad del Este (5 Lojas · 10 Operadores 08h–18h) · Câmbio Real USD→BRL via Pix + Split 90% Loja / 7% Portal / 3% EPYX
     </p>
   </footer>
 
   <script src="app.js"></script>
-  <script src="real-estate.js"></script>
 </body>
 </html>

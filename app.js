@@ -15,7 +15,7 @@ const state = {
   fx: {
     commercialUsdBrl: 5.6500,
     usdPyg: 7820,
-    spreadPct: 1.22, // Spread operacional Bancard / EPYX
+    spreadPct: 1.22, // Spread operacional Câmbio Real / EPYX
     iofPct: 0.38,    // IOF câmbio instantâneo Pix fronteira
     effectiveUsdBrl: 5.7404,
     source: 'Cotação Real API (Inicializando...)',
@@ -320,7 +320,7 @@ const state = {
       orderId: 'PG-9001',
       txid: 'TXID-DEMO-60K-001',
       debitAccount: '2.1.01 · Passivo Transitório Escrow Pick & Go',
-      creditAccount: '2.1.10 · Repasse Lojista Bancard USD (90% · Cellshop)',
+      creditAccount: '2.1.10 · Repasse Lojista via Câmbio Real USD (90% · Cellshop)',
       amountBrl: 54000.00,
       amountUsd: 9407.01,
       fxRate: 5.7404,
@@ -542,13 +542,13 @@ async function fetchLiveExchangeRate(showNotification = false) {
       // Fallback caso sem internet local, mantendo simulação fiel de variação de mercado
       const microVariation = (Math.random() * 0.04) - 0.02;
       state.fx.commercialUsdBrl = Number(Math.max(5.10, state.fx.commercialUsdBrl + microVariation).toFixed(4));
-      state.fx.source = 'Cotação Real Bancard/CDE Feed';
+      state.fx.source = 'Cotação Oficial Câmbio Real Pix';
       state.fx.updatedAt = new Date().toLocaleTimeString('pt-BR');
       recalcEffectiveFx();
       updateHeaderFxUI();
       renderCurrentView(false);
       if (showNotification) {
-        showToast(`💱 Cotação atualizada (Feed Bancard CDE): Comercial R$ ${state.fx.commercialUsdBrl.toFixed(4)} → Pix R$ ${state.fx.effectiveUsdBrl.toFixed(4)}`);
+        showToast(`💱 Cotação atualizada (Câmbio Real Pix): Comercial R$ ${state.fx.commercialUsdBrl.toFixed(4)} → Pix R$ ${state.fx.effectiveUsdBrl.toFixed(4)}`);
       }
     }
   } finally {
@@ -1858,7 +1858,7 @@ function renderLojistaView() {
           <span class="kpi-sub">Processamento Pix &amp; Repasse Dólar</span>
         </div>
         <div class="kpi-card" style="border-color:var(--py-emerald);background:var(--py-emerald-light);">
-          <span class="kpi-label" style="color:#065F46;">Líquido Loja (90% em Conta USD Bancard)</span>
+          <span class="kpi-label" style="color:#065F46;">Líquido Loja (90% em Conta USD via Câmbio Real)</span>
           <span class="kpi-value" style="color:#065F46;">${formatUSD(netStoreUsd)}</span>
           <span class="kpi-sub" style="color:#065F46;">(${formatBRL(netStoreBrl)} convertidos no câmbio travado)</span>
         </div>
@@ -1983,7 +1983,7 @@ function renderPlataformaView() {
         <span class="kpi-sub">Volume USD: ${formatUSD(totalGmvUsd)}</span>
       </div>
       <div class="kpi-card">
-        <span class="kpi-label">Repasse Lojas (90% Bancard USD)</span>
+        <span class="kpi-label">Repasse Lojas (90% Câmbio Real USD)</span>
         <span class="kpi-value">${formatBRL(totalStoreBrl)}</span>
         <span class="kpi-sub">${formatUSD(totalGmvUsd * 0.9)}</span>
       </div>
@@ -2281,7 +2281,7 @@ function openFxConfigModal() {
 
   body.innerHTML = `
     <p style="font-size:0.86rem;color:var(--text-muted);margin-bottom:14px;">
-      O checkout do <strong>Portal Paraguai · Pick &amp; Go</strong> converte os preços das lojas em Dólar (US$) para Reais (R$) usando a cotação comercial em tempo real somada ao spread operacional e IOF. As lojas recebem 90% liquidados em dólar via Bancard/EPYX.
+      O checkout do <strong>Portal Paraguai · Pick &amp; Go</strong> processa o Pix via <strong>Câmbio Real</strong>, convertendo os preços das lojas em Dólar (US$) para Reais (R$) usando a cotação comercial em tempo real somada ao spread operacional e IOF. As lojas recebem 90% liquidados em dólar via Câmbio Real / EPYX.
     </p>
 
     <div class="grid-2">
@@ -2290,7 +2290,7 @@ function openFxConfigModal() {
         <input id="fxInputCommercial" type="number" step="0.0001" class="form-control" value="${state.fx.commercialUsdBrl}" />
       </div>
       <div class="form-group">
-        <label for="fxInputSpread">Spread Liquidação Pix Fronteira (%)</label>
+        <label for="fxInputSpread">Spread Liquidação Pix Câmbio Real (%)</label>
         <input id="fxInputSpread" type="number" step="0.05" class="form-control" value="${state.fx.spreadPct}" />
       </div>
       <div class="form-group">
@@ -2306,7 +2306,7 @@ function openFxConfigModal() {
     <div style="padding:12px;background:var(--py-blue-soft);border-radius:var(--radius-sm);margin:12px 0;font-size:0.85rem;">
       <div>Fonte Atual: <strong>${state.fx.source}</strong> (Atualizado às ${state.fx.updatedAt})</div>
       <div style="margin-top:4px;font-size:1rem;color:var(--py-red);font-weight:800;">
-        Taxa Efetiva Pix Calculada: US$ 1,00 = R$ ${state.fx.effectiveUsdBrl.toFixed(4)}
+        Taxa Efetiva Pix Câmbio Real: US$ 1,00 = R$ ${state.fx.effectiveUsdBrl.toFixed(4)}
       </div>
     </div>
 
@@ -2333,14 +2333,14 @@ function saveFxModalSettings() {
   state.fx.spreadPct = Number(spread.toFixed(2));
   state.fx.iofPct = Number(iof.toFixed(2));
   state.fx.usdPyg = Math.round(pyg);
-  state.fx.source = 'Configuração Manual / Simulador Tesouraria';
+  state.fx.source = 'Configuração Manual / Simulador Câmbio Real';
   state.fx.updatedAt = new Date().toLocaleTimeString('pt-BR');
 
   recalcEffectiveFx();
   updateHeaderFxUI();
   renderCurrentView(false);
   document.getElementById('fxConfigDialog')?.close();
-  showToast(`💱 Câmbio atualizado: US$ 1 = R$ ${state.fx.effectiveUsdBrl.toFixed(4)} aplicado ao catálogo e sacola!`);
+  showToast(`💱 Câmbio Real atualizado: US$ 1 = R$ ${state.fx.effectiveUsdBrl.toFixed(4)} aplicado ao catálogo e sacola!`);
 }
 
 // ============================================================================
@@ -2517,7 +2517,7 @@ function openPixCheckoutModal(isOneClick = false) {
 
   const totals = calculateCartTotals();
   const txid = 'TXID-PY-' + Math.floor(100000 + Math.random() * 900000);
-  const pixCopyPaste = `00020126580014br.gov.bcb.pix0136portalparaguai-epyx-${txid.toLowerCase()}520400005303986540${totals.finalPixBrl.toFixed(2)}5802BR5923PORTAL PARAGUAI PICK GO6014CIUDAD DEL ESTE62070503***6304ABCD`;
+  const pixCopyPaste = `00020126580014br.gov.bcb.pix0136cambioreal-epyx-${txid.toLowerCase()}520400005303986540${totals.finalPixBrl.toFixed(2)}5802BR5923PORTAL PARAGUAI PICK GO6014CIUDAD DEL ESTE62070503***6304ABCD`;
 
   state.activePixCheckout = {
     txid,
@@ -2549,11 +2549,11 @@ function renderPixCheckoutModalContent() {
     <div class="grid-2" style="align-items:start;">
       <div class="qr-box">
         <span class="badge badge-blue">⏱️ Câmbio Travado por 05:00 min</span>
-        <h4 style="color:var(--py-blue-dark);">QR Code Pix Oficial (Adquirente / Bancard)</h4>
+        <h4 style="color:var(--py-blue-dark);">QR Code Pix Oficial (Câmbio Real)</h4>
         ${generateQrSvg(pixCopyPaste, 165)}
         <div style="font-size:1.3rem;font-weight:800;color:var(--py-red);">${formatBRL(totals.finalPixBrl)}</div>
         <div style="font-size:0.78rem;color:var(--text-muted);">
-          Equivalente Loja: <strong>${formatUSD(totals.netUsd)}</strong> · Câmbio: <strong>R$ ${fxLocked.toFixed(4)}</strong>
+          Equivalente Loja: <strong>${formatUSD(totals.netUsd)}</strong> · Câmbio Real: <strong>R$ ${fxLocked.toFixed(4)}</strong>
         </div>
         <div style="width:100%;margin-top:6px;">
           <input type="text" class="form-control" style="font-size:0.72rem;width:100%;" value="${pixCopyPaste}" readonly />
@@ -2565,13 +2565,13 @@ function renderPixCheckoutModalContent() {
 
       <div>
         <span class="screen-tag red">RF-06 · RF-07 · RF-08 · Critério 14.2</span>
-        <h4 style="margin:6px 0 10px;color:var(--py-blue-dark);">Demonstrador de Liquidação, Split &amp; Idempotência</h4>
+        <h4 style="margin:6px 0 10px;color:var(--py-blue-dark);">Demonstrador de Liquidação Câmbio Real, Split &amp; Idempotência</h4>
 
         <div style="padding:12px;background:var(--py-surface-alt);border-radius:var(--radius-sm);font-size:0.82rem;margin-bottom:12px;display:flex;flex-direction:column;gap:5px;">
-          <div><strong>TxID Pix:</strong> <code>${txid}</code></div>
+          <div><strong>TxID Pix Câmbio Real:</strong> <code>${txid}</code></div>
           <div><strong>Cliente:</strong> ${state.customer.nome} (${state.customer.cpf})</div>
           <div><strong>Modo Entrega:</strong> ${state.deliveryMode}</div>
-          <div><strong>90% Loja(s) (USD Bancard):</strong> ${formatBRL(totals.storeSplitBrl)} (${formatUSD(totals.netUsd * 0.9)})</div>
+          <div><strong>90% Loja(s) (USD via Câmbio Real):</strong> ${formatBRL(totals.storeSplitBrl)} (${formatUSD(totals.netUsd * 0.9)})</div>
           <div><strong>7% Comissão Portal Paraguai:</strong> ${formatBRL(totals.portalSplitBrl)}</div>
           <div><strong>3% Parceiro Liquidação EPYX:</strong> ${formatBRL(totals.epyxSplitBrl)}</div>
         </div>
@@ -2718,7 +2718,7 @@ function simulatePixWebhookPayment() {
       orderId: newOrderId,
       txid,
       debitAccount: '2.1.01 · Passivo Transitório Escrow Pick & Go',
-      creditAccount: `2.1.10 · Repasse Lojista Bancard USD (90% · ${storesList.join(', ')})`,
+      creditAccount: `2.1.10 · Repasse Lojista via Câmbio Real USD (90% · ${storesList.join(', ')})`,
       amountBrl: totals.storeSplitBrl,
       amountUsd: Number((totals.netUsd * 0.90).toFixed(2)),
       fxRate: fxLocked,
@@ -2729,7 +2729,7 @@ function simulatePixWebhookPayment() {
       timestamp: nowStr,
       orderId: newOrderId,
       txid,
-      debitAccount: '1.1.01 · Conta Liquidação Pix Adquirente (BRL)',
+      debitAccount: '1.1.01 · Conta Liquidação Pix Câmbio Real (BRL)',
       creditAccount: '2.1.01 · Passivo Transitório Escrow Pick & Go',
       amountBrl: totals.finalPixBrl,
       amountUsd: totals.netUsd,
@@ -2764,7 +2764,7 @@ function refundOrderAndReverseSplit(orderId) {
       orderId: order.id,
       txid: order.txid,
       debitAccount: '2.1.20 · Liquidação & FX Partner EPYX (3%)',
-      creditAccount: '1.1.01 · Conta Liquidação Pix Adquirente (Estorno)',
+      creditAccount: '1.1.01 · Conta Liquidação Pix Câmbio Real (Estorno)',
       amountBrl: order.split.epyxBrl,
       amountUsd: Number((order.totalUsd * 0.03).toFixed(2)),
       fxRate: order.fxRateApplied,
@@ -2776,7 +2776,7 @@ function refundOrderAndReverseSplit(orderId) {
       orderId: order.id,
       txid: order.txid,
       debitAccount: '3.1.01 · Receita Comissão Portal Paraguai (7%)',
-      creditAccount: '1.1.01 · Conta Liquidação Pix Adquirente (Estorno)',
+      creditAccount: '1.1.01 · Conta Liquidação Pix Câmbio Real (Estorno)',
       amountBrl: order.split.portalBrl,
       amountUsd: Number((order.totalUsd * 0.07).toFixed(2)),
       fxRate: order.fxRateApplied,
@@ -2787,8 +2787,8 @@ function refundOrderAndReverseSplit(orderId) {
       timestamp: nowStr,
       orderId: order.id,
       txid: order.txid,
-      debitAccount: '2.1.10 · Repasse Lojista Bancard USD (90%)',
-      creditAccount: '1.1.01 · Conta Liquidação Pix Adquirente (Estorno)',
+      debitAccount: '2.1.10 · Repasse Lojista via Câmbio Real USD (90%)',
+      creditAccount: '1.1.01 · Conta Liquidação Pix Câmbio Real (Estorno)',
       amountBrl: order.split.storeBrl,
       amountUsd: order.split.storeUsd,
       fxRate: order.fxRateApplied,

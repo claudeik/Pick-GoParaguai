@@ -43,7 +43,7 @@ O produto evolui o "Compras no Paraguai" (hoje só mostra preços) para um fluxo
 
 | # | Decisão | Impacto |
 |---|---|---|
-| D1 | **Quem recebe o Pix** e como a conversão para dólar e o repasse às lojas funcionam (lojas com conta em dólar, Pix via Bancard) | Arquitetura de pagamentos e ledger |
+| D1 | **Quem recebe o Pix** e como a conversão para dólar e o repasse às lojas funcionam (lojas com conta em dólar, Pix via Câmbio Real) | Arquitetura de pagamentos e ledger |
 | D2 | **Base legal e consentimento** do turista para KYC, enriquecimento de dados e mensagens (LGPD e, no Paraguai, a lei local) | Modelo de consentimento, retenção |
 | D3 | **Cota de compras por terra** (referência de US$ 500 por pessoa, regra de 2020) e tributação para itens de valor alto | Regras de checkout e avisos |
 | D4 | **Percentuais**: comissão do Portal, split da EPYX, quem paga bônus e cashback | Motor de regras de comissão |

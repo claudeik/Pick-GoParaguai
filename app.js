@@ -1,6 +1,6 @@
 /**
  * Portal Paraguai · Pick & Go — Sistema Demonstrável Completo (Telas T1 a T30)
- * Cores da Bandeira do Paraguai (#D52B1E Vermelho, #FFFFFF Branco, #0038A8 Azul)
+ * Identidade Executiva Paraguai (#C41E1E Vermelho Carmim, #FFFFFF Branco, #0B1E3B Azul Escuro)
  * Checkout Pix com Câmbio Real Ao Vivo (AwesomeAPI / ExchangeRate-API) + Ledger Dupla Entrada + Split 90/7/3
  */
 
@@ -647,9 +647,9 @@ function generateQrSvg(seedString, size = 156) {
   };
 
   const drawFinder = (r0, c0) => {
-    rects += `<rect x="${c0 * cell}" y="${r0 * cell}" width="${7 * cell}" height="${7 * cell}" fill="#0038A8" rx="2"/>`;
+    rects += `<rect x="${c0 * cell}" y="${r0 * cell}" width="${7 * cell}" height="${7 * cell}" fill="#0B1E3B" rx="2"/>`;
     rects += `<rect x="${(c0 + 1) * cell}" y="${(r0 + 1) * cell}" width="${5 * cell}" height="${5 * cell}" fill="#FFFFFF"/>`;
-    rects += `<rect x="${(c0 + 2) * cell}" y="${(r0 + 2) * cell}" width="${3 * cell}" height="${3 * cell}" fill="#D52B1E"/>`;
+    rects += `<rect x="${(c0 + 2) * cell}" y="${(r0 + 2) * cell}" width="${3 * cell}" height="${3 * cell}" fill="#C41E1E"/>`;
   };
 
   drawFinder(0, 0);
@@ -1417,7 +1417,7 @@ function renderVideoLinkView() {
           <span class="badge badge-red">YouTube / Reels CDE</span>
         </div>
 
-        <div style="background:linear-gradient(135deg,#00236B,#0f172a);color:#fff;border-radius:var(--radius-md);padding:22px;margin-bottom:16px;">
+        <div style="background:linear-gradient(135deg,#050E1D,#0B1E3B);color:#fff;border-radius:var(--radius-md);padding:22px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.1);">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
             <span class="badge badge-red">▶ AO VIVO · CANAL PORTAL PARAGUAI</span>
             <span style="font-size:0.78rem;color:#cbd5e1;">Vídeo ID: VID-CDE-OUT2026</span>

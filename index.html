@@ -4,6 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal Paraguai · Pick &amp; Go — Plataforma In-Store, Pix Câmbio Real &amp; Operação</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
   <script type="module">
     if (!("popover" in HTMLElement.prototype)) {
@@ -12,21 +15,49 @@
   </script>
 </head>
 <body>
-  <!-- Faixa Tricolor Oficial da Bandeira do Paraguai (Vermelho, Branco, Azul) -->
+  <!-- Faixa Tricolor Oficial da Bandeira do Paraguai (Vermelho, Branco, Azul Escuro) -->
   <div class="paraguay-tricolor-bar" role="presentation"></div>
 
-  <!-- Cabeçalho Principal com Câmbio Real Ao Vivo -->
+  <!-- Cabeçalho Principal Executivo com Câmbio Real Ao Vivo -->
   <header class="app-header">
     <div class="header-top">
       <div class="brand-identity">
-        <div class="flag-badge" aria-label="Bandeira do Paraguai">
-          <div class="flag-stripe-red"></div>
-          <div class="flag-stripe-white"><span class="flag-star">★</span></div>
-          <div class="flag-stripe-blue"></div>
+        <div class="brand-logo-mark" aria-label="Emblema Portal Paraguai Pick &amp; Go — Vermelho, Branco e Azul Escuro">
+          <svg class="brand-crest-svg" viewBox="0 0 64 48" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+            <defs>
+              <linearGradient id="crestRed" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#B91C1C" />
+                <stop offset="100%" stop-color="#DC2626" />
+              </linearGradient>
+              <linearGradient id="crestDarkBlue" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#061021" />
+                <stop offset="100%" stop-color="#0F2952" />
+              </linearGradient>
+              <linearGradient id="crestGold" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#FDE68A" />
+                <stop offset="50%" stop-color="#D4AF37" />
+                <stop offset="100%" stop-color="#9A7B1C" />
+              </linearGradient>
+            </defs>
+            <!-- Moldura Executiva Metálica -->
+            <rect x="1" y="1" width="62" height="46" rx="10" fill="#061021" stroke="url(#crestGold)" stroke-width="1.6" />
+            <!-- Faixa Superior: Vermelho Carmim -->
+            <path d="M2.5 11 C2.5 6.3 6.3 2.5 11 2.5 H53 C57.7 2.5 61.5 6.3 61.5 11 V16.5 H2.5 Z" fill="url(#crestRed)" />
+            <!-- Faixa Central: Branco Puro -->
+            <rect x="2.5" y="16.5" width="59" height="15" fill="#FFFFFF" />
+            <!-- Faixa Inferior: Azul Escuro Profundo -->
+            <path d="M2.5 31.5 H61.5 V37 C61.5 41.7 57.7 45.5 53 45.5 H11 C6.3 45.5 2.5 41.7 2.5 37 Z" fill="url(#crestDarkBlue)" />
+            <!-- Emblema Central: Escudo Circular Azul Escuro + Ouro + Estrela de Maio -->
+            <circle cx="32" cy="24" r="9.5" fill="#091933" stroke="url(#crestGold)" stroke-width="1.4" />
+            <circle cx="32" cy="24" r="7.2" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="0.7" stroke-dasharray="2 1.5" />
+            <polygon points="32,17.8 33.6,21.6 37.7,21.9 34.5,24.6 35.5,28.6 32,26.4 28.5,28.6 29.5,24.6 26.3,21.9 30.4,21.6" fill="url(#crestGold)" />
+          </svg>
+          <span class="brand-monogram">P&amp;G</span>
         </div>
         <div class="brand-title">
+          <span class="brand-eyebrow">PORTAL PARAGUAI · IN-STORE &amp; CROSS-BORDER FINTECH</span>
           <h1>
-            Portal Paraguai · Pick &amp; Go
+            Pick &amp; Go
             <span class="brand-pill">Piloto CDE · v0.1</span>
           </h1>
           <span class="brand-subtitle">80+ Lojas em Ciudad del Este · Checkout Pix via Câmbio Real · Split 90% Loja / 7% Portal / 3% EPYX</span>
@@ -43,7 +74,7 @@
           </div>
         </div>
         <div class="header-actions">
-          <button type="button" class="btn btn-sm btn-outline" id="btnRefreshFx" title="Consultar API de Câmbio Real agora">
+          <button type="button" class="btn btn-sm btn-header-ghost" id="btnRefreshFx" title="Consultar API de Câmbio Real agora">
             🔄 Atualizar Câmbio API
           </button>
           <button type="button" class="btn btn-sm btn-primary" id="btnOpenFxModal">

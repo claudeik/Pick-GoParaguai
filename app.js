@@ -5,7 +5,7 @@
  */
 
 const state = {
-  currentView: 'turista',
+  currentView: 'imobiliario',
   turistaSubTab: 'catalogo', // 'catalogo' | 'scango' | 'pedidos' | 'carteira' | 'kyc'
   selectedStoreFilter: 'ALL',
   selectedMerchantStore: 'loja-cellshop',
@@ -707,6 +707,9 @@ function renderCurrentView(withTransition = false) {
 
   const renderFn = () => {
     switch (state.currentView) {
+      case 'imobiliario':
+        container.innerHTML = typeof renderImobiliarioZuviaView === 'function' ? renderImobiliarioZuviaView() : renderTuristaView();
+        break;
       case 'turista':
         container.innerHTML = renderTuristaView();
         break;
@@ -726,7 +729,7 @@ function renderCurrentView(withTransition = false) {
         container.innerHTML = renderCrmCampanhasView();
         break;
       default:
-        container.innerHTML = renderTuristaView();
+        container.innerHTML = typeof renderImobiliarioZuviaView === 'function' ? renderImobiliarioZuviaView() : renderTuristaView();
     }
   };
 

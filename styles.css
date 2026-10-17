@@ -1,0 +1,965 @@
+:root {
+  /* Cores Oficiais da Bandeira do Paraguai */
+  --py-red: #D52B1E;
+  --py-red-dark: #A81E13;
+  --py-red-light: #FEE2E2;
+  --py-red-soft: #FFF5F5;
+
+  --py-white: #FFFFFF;
+  --py-surface: #F8FAFC;
+  --py-surface-alt: #F1F5F9;
+
+  --py-blue: #0038A8;
+  --py-blue-dark: #00236B;
+  --py-blue-light: #DBEAFE;
+  --py-blue-soft: #EFF6FF;
+
+  /* Detalhe do Escudo Nacional (Estrela de Maio / Palma e Oliveira) */
+  --py-gold: #F59E0B;
+  --py-gold-light: #FEF3C7;
+  --py-emerald: #10B981;
+  --py-emerald-light: #D1FAE5;
+
+  --text-main: #0F172A;
+  --text-muted: #475569;
+  --text-light: #64748B;
+  --border-color: #E2E8F0;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
+  --shadow-sm: 0 1px 3px rgba(0, 35, 107, 0.07);
+  --shadow-md: 0 4px 14px rgba(0, 35, 107, 0.10);
+  --shadow-lg: 0 12px 28px rgba(0, 35, 107, 0.14);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text-main);
+  background-color: var(--py-surface);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4 {
+  text-wrap: balance;
+  letter-spacing: -0.02em;
+}
+
+/* RNF Acessibilidade: área mínima de toque de 44px */
+button,
+.btn,
+select,
+input[type="text"],
+input[type="number"],
+input[type="search"],
+.nav-tab {
+  min-height: 44px;
+}
+
+/* Faixa Tricolor da Bandeira do Paraguai */
+.paraguay-tricolor-bar {
+  height: 9px;
+  width: 100%;
+  background: linear-gradient(
+    to right,
+    var(--py-red) 0%,
+    var(--py-red) 33.33%,
+    var(--py-white) 33.33%,
+    var(--py-white) 66.66%,
+    var(--py-blue) 66.66%,
+    var(--py-blue) 100%
+  );
+  border-bottom: 1px solid rgba(0, 56, 168, 0.15);
+  position: relative;
+}
+
+/* Header Principal */
+.app-header {
+  background: linear-gradient(135deg, var(--py-blue-dark) 0%, var(--py-blue) 65%, #0a47c4 100%);
+  color: var(--py-white);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: var(--shadow-md);
+}
+
+.header-top {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand-identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.flag-badge {
+  width: 48px;
+  height: 34px;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.flag-stripe-red {
+  flex: 1;
+  background: var(--py-red);
+}
+
+.flag-stripe-white {
+  flex: 1;
+  background: var(--py-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flag-stripe-blue {
+  flex: 1;
+  background: var(--py-blue);
+}
+
+.flag-star {
+  color: var(--py-gold);
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.brand-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title h1 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--py-white);
+}
+
+.brand-pill {
+  background: var(--py-red);
+  color: var(--py-white);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.brand-subtitle {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Widget de Câmbio Real Ao Vivo no Header */
+.fx-live-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  padding: 6px 14px;
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.fx-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22C55E;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.25);
+  animation: pulseFx 2s infinite;
+}
+
+@keyframes pulseFx {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.75; }
+}
+
+.fx-values {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+}
+
+.fx-values strong {
+  font-size: 0.92rem;
+  color: #FDE047;
+}
+
+.fx-meta {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Barra de Navegação de Personas / Telas (T1 a T30) */
+.persona-nav-wrapper {
+  background: var(--py-white);
+  border-bottom: 3px solid var(--py-red);
+  box-shadow: 0 2px 6px rgba(0, 35, 107, 0.05);
+}
+
+.persona-nav {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 6px 20px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.nav-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.86rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.nav-tab:hover {
+  background: var(--py-blue-soft);
+  color: var(--py-blue);
+}
+
+.nav-tab.active {
+  background: var(--py-blue);
+  color: var(--py-white);
+  box-shadow: 0 2px 8px rgba(0, 56, 168, 0.25);
+}
+
+.nav-tab .tab-badge {
+  background: var(--py-red);
+  color: var(--py-white);
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.nav-tab.active .tab-badge {
+  background: var(--py-white);
+  color: var(--py-red);
+}
+
+/* Layout Principal */
+.main-container {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 22px 20px 60px;
+  flex: 1;
+}
+
+/* Sub-abas do App do Turista */
+.sub-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  background: var(--py-white);
+  padding: 8px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.sub-tab {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.84rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+
+.sub-tab:hover {
+  background: var(--py-red-soft);
+  color: var(--py-red);
+}
+
+.sub-tab.active {
+  background: var(--py-red);
+  color: var(--py-white);
+}
+
+/* Grids e Cards */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.layout-sidebar {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 22px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .layout-sidebar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--py-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.card-flag-top {
+  border-top: 4px solid var(--py-blue);
+}
+
+.card-flag-red {
+  border-top: 4px solid var(--py-red);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--py-blue-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.screen-tag {
+  display: inline-block;
+  background: var(--py-blue-light);
+  color: var(--py-blue-dark);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+}
+
+.screen-tag.red {
+  background: var(--py-red-light);
+  color: var(--py-red-dark);
+}
+
+/* Botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.16s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--py-red);
+  color: var(--py-white);
+  box-shadow: 0 2px 6px rgba(213, 43, 30, 0.25);
+}
+
+.btn-primary:hover {
+  background: var(--py-red-dark);
+}
+
+.btn-blue {
+  background: var(--py-blue);
+  color: var(--py-white);
+  box-shadow: 0 2px 6px rgba(0, 56, 168, 0.25);
+}
+
+.btn-blue:hover {
+  background: var(--py-blue-dark);
+}
+
+.btn-outline {
+  background: var(--py-white);
+  color: var(--py-blue);
+  border-color: var(--py-blue);
+}
+
+.btn-outline:hover {
+  background: var(--py-blue-soft);
+}
+
+.btn-outline-red {
+  background: var(--py-white);
+  color: var(--py-red);
+  border-color: var(--py-red);
+}
+
+.btn-outline-red:hover {
+  background: var(--py-red-soft);
+}
+
+.btn-success {
+  background: #059669;
+  color: var(--py-white);
+}
+
+.btn-success:hover {
+  background: #047857;
+}
+
+.btn-sm {
+  min-height: 38px;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+/* Filtros e Catálogo */
+.store-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.store-pill {
+  min-height: 44px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--py-white);
+  color: var(--text-main);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.store-pill.active {
+  background: var(--py-blue);
+  color: var(--py-white);
+  border-color: var(--py-blue);
+}
+
+.product-card {
+  background: var(--py-white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.product-visual {
+  height: 150px;
+  background: linear-gradient(135deg, var(--py-blue-soft) 0%, #FFFFFF 50%, var(--py-red-soft) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.4rem;
+  position: relative;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.product-store-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--py-blue);
+  color: var(--py-white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.product-stock-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(15, 23, 42, 0.75);
+  color: var(--py-white);
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.product-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 8px;
+}
+
+.product-title {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.product-sku {
+  font-size: 0.74rem;
+  color: var(--text-light);
+}
+
+.price-box {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.price-usd {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--py-blue);
+}
+
+.price-brl {
+  font-size: 1.22rem;
+  font-weight: 800;
+  color: var(--py-red);
+}
+
+.price-pyg {
+  font-size: 0.72rem;
+  color: var(--text-light);
+}
+
+/* Badges e Status */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  font-weight: 700;
+}
+
+.badge-blue { background: var(--py-blue-light); color: var(--py-blue-dark); }
+.badge-red { background: var(--py-red-light); color: var(--py-red-dark); }
+.badge-green { background: var(--py-emerald-light); color: #065F46; }
+.badge-gold { background: var(--py-gold-light); color: #92400E; }
+.badge-gray { background: #E2E8F0; color: #334155; }
+
+/* Alertas de Cota e Info */
+.quota-alert {
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.83rem;
+  margin: 12px 0;
+  border-left: 4px solid var(--py-blue);
+  background: var(--py-blue-soft);
+}
+
+.quota-alert.warning {
+  border-left-color: var(--py-red);
+  background: var(--py-red-soft);
+  color: var(--py-red-dark);
+}
+
+/* Tabelas */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  background: var(--py-surface-alt);
+  color: var(--py-blue-dark);
+  font-weight: 700;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+tr:hover td {
+  background: rgba(0, 56, 168, 0.02);
+}
+
+/* KPIs */
+.kpi-card {
+  background: var(--py-white);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.kpi-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--py-blue-dark);
+}
+
+.kpi-value.red {
+  color: var(--py-red);
+}
+
+.kpi-sub {
+  font-size: 0.76rem;
+  color: var(--text-light);
+}
+
+/* Inputs e Formulários */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.form-control {
+  padding: 9px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  background: var(--py-white);
+  color: var(--text-main);
+}
+
+.form-control:focus {
+  outline: 2px solid var(--py-blue);
+  border-color: transparent;
+}
+
+/* QR Code Container */
+.qr-box {
+  background: var(--py-white);
+  border: 2px solid var(--py-blue);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+/* Kanban Central de Operação T30 (5 etapas incluindo EM_TESTE_LOJA RF-50) */
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(225px, 1fr));
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.kanban-col {
+  background: var(--py-surface-alt);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  min-height: 360px;
+}
+
+.kanban-col-header {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--py-blue-dark);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kanban-item {
+  background: var(--py-white);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+  border-left: 4px solid var(--py-blue);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kanban-item.priority {
+  border-left-color: var(--py-red);
+}
+
+/* Native <dialog> Modals (Modern Web Guidance) */
+dialog.modern-dialog {
+  margin: auto;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0;
+  max-width: 680px;
+  width: calc(100% - 32px);
+  box-shadow: var(--shadow-lg);
+  background: var(--py-white);
+  color: var(--text-main);
+}
+
+dialog.modern-dialog::backdrop {
+  background: rgba(0, 23, 68, 0.62);
+  backdrop-filter: blur(4px);
+}
+
+.dialog-header {
+  background: linear-gradient(135deg, var(--py-blue-dark), var(--py-blue));
+  color: var(--py-white);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dialog-body {
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.dialog-footer {
+  padding: 14px 20px;
+  background: var(--py-surface);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Toast Notifications using Popover API (Modern Web Guidance) */
+.toast-stack {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast-popover[popover] {
+  position: static;
+  margin: 0;
+  border: none;
+  border-left: 5px solid var(--py-red);
+  background: var(--py-blue-dark);
+  color: var(--py-white);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  max-width: 380px;
+  font-size: 0.85rem;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition-behavior: allow-discrete;
+}
+
+.toast-popover[popover]:is(:popover-open, .\:popover-open) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.toast-popover + .toast-popover {
+  margin-top: 0.5rem;
+}
+
+/* View Transitions (Modern Web Guidance) */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/* Barra visual de Split 90/7/3 */
+.split-bar {
+  height: 26px;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+  margin: 10px 0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--py-white);
+}
+
+.split-seg-store {
+  background: var(--py-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.split-seg-portal {
+  background: var(--py-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.split-seg-epyx {
+  background: var(--py-gold);
+  color: #1E293B;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Cascata de Ativação Multicanal */
+.cascade-step {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  margin-bottom: 10px;
+  background: var(--py-white);
+}
+
+.cascade-step.active-step {
+  border-color: var(--py-blue);
+  background: var(--py-blue-soft);
+}
+
+/* Rodapé Tricolor */
+.app-footer {
+  background: var(--py-blue-dark);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 18px 20px;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-top: auto;
+}

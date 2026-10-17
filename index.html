@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portal Paraguai · Pick &amp; Go — Plataforma In-Store, Pix Câmbio Real &amp; Operação</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module">
+    if (!("popover" in HTMLElement.prototype)) {
+      import("https://unpkg.com/@oddbird/popover-polyfill@latest/dist/popover.min.js");
+    }
+  </script>
+</head>
+<body>
+  <!-- Faixa Tricolor Oficial da Bandeira do Paraguai (Vermelho, Branco, Azul) -->
+  <div class="paraguay-tricolor-bar" role="presentation"></div>
+
+  <!-- Cabeçalho Principal com Câmbio Real Ao Vivo -->
+  <header class="app-header">
+    <div class="header-top">
+      <div class="brand-identity">
+        <div class="flag-badge" aria-label="Bandeira do Paraguai">
+          <div class="flag-stripe-red"></div>
+          <div class="flag-stripe-white"><span class="flag-star">★</span></div>
+          <div class="flag-stripe-blue"></div>
+        </div>
+        <div class="brand-title">
+          <h1>
+            Portal Paraguai · Pick &amp; Go
+            <span class="brand-pill">Piloto CDE · v0.1</span>
+          </h1>
+          <span class="brand-subtitle">80+ Lojas em Ciudad del Este · Checkout Pix Câmbio Real · Split Bancard / EPYX</span>
+        </div>
+      </div>
+
+      <!-- Widget de Câmbio Real Ao Vivo (AwesomeAPI / ExchangeRate-API) -->
+      <div class="fx-live-banner" id="fxBanner">
+        <div class="fx-indicator">
+          <span class="pulse-dot" id="fxPulseDot"></span>
+          <div class="fx-values">
+            <span>Câmbio Pix Efetivo: <strong id="headerFxEffective">US$ 1 = R$ 5,74</strong></span>
+            <span class="fx-meta" id="headerFxMeta">Comercial: R$ 5,65 · Spread 1,2% + IOF 0,38% · 1 USD = 7.820 PYG</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button type="button" class="btn btn-sm btn-outline" id="btnRefreshFx" title="Consultar API de Câmbio Real agora">
+            🔄 Atualizar Câmbio API
+          </button>
+          <button type="button" class="btn btn-sm btn-primary" id="btnOpenFxModal">
+            ⚙️ Motor de Câmbio &amp; Cota
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegação Principal por Atores e Módulos (Telas T1 a T30) -->
+    <div class="persona-nav-wrapper">
+      <nav class="persona-nav" aria-label="Módulos do Sistema Pick & Go">
+        <button type="button" class="nav-tab active" data-view="turista">
+          🛍️ App do Turista <span class="tab-badge">T1–T8 · T11–T19 · T27</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="video">
+          🎬 Vídeo &amp; Link 1-Clique <span class="tab-badge">T20–T22</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="central">
+          📦 Central do Portal &amp; Saída <span class="tab-badge" id="badgeCentralCount">T7 · T30</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="lojista">
+          🏪 Painel do Lojista <span class="tab-badge">T9</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="plataforma">
+          🏦 Plataforma, Split &amp; Ledger <span class="tab-badge">T10 · T24–T25 · T28</span>
+        </button>
+        <button type="button" class="nav-tab" data-view="crm">
+          💬 CRM, Campanhas IA &amp; Cascata <span class="tab-badge">T14–T18 · T29</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal Renderizado Dinamicamente com View Transitions -->
+  <main class="main-container" id="mainViewContainer">
+    <h2 id="view-heading" tabindex="-1" style="position:absolute;left:-9999px;">Portal Paraguai Pick &amp; Go</h2>
+    <div id="appContent"></div>
+  </main>
+
+  <!-- Modal Nativo <dialog> para Motor de Câmbio Real & Simulador (closedby="any") -->
+  <dialog class="modern-dialog" id="fxConfigDialog" closedby="any" aria-labelledby="fxDialogTitle">
+    <div class="dialog-header">
+      <h3 id="fxDialogTitle">💱 Motor de Câmbio Real Pix &amp; Liquidação D1 (USD / BRL / PYG)</h3>
+      <button type="button" class="btn btn-sm btn-outline" id="btnCloseFxDialog">Fechar ✕</button>
+    </div>
+    <div class="dialog-body" id="fxDialogBody"></div>
+  </dialog>
+
+  <!-- Modal Nativo <dialog> para Configurador de Produto T27 (Ex.: Bicicleta R$ 60.000) -->
+  <dialog class="modern-dialog" id="productConfigDialog" closedby="any" aria-labelledby="configDialogTitle">
+    <div class="dialog-header">
+      <h3 id="configDialogTitle">🚲 T27 · Configurador de Produto Personalizado (RF-04)</h3>
+      <button type="button" class="btn btn-sm btn-outline" id="btnCloseConfigDialog">Fechar ✕</button>
+    </div>
+    <div class="dialog-body" id="configDialogBody"></div>
+  </dialog>
+
+  <!-- Modal Nativo <dialog> para Checkout Pix QR Code & Split (T3 / T24 / T25) -->
+  <dialog class="modern-dialog" id="pixCheckoutDialog" closedby="any" aria-labelledby="pixDialogTitle">
+    <div class="dialog-header">
+      <h3 id="pixDialogTitle">💠 T3 / T24 · Checkout Pix Câmbio Real &amp; Split Instantâneo</h3>
+      <button type="button" class="btn btn-sm btn-outline" id="btnClosePixDialog">Fechar ✕</button>
+    </div>
+    <div class="dialog-body" id="pixDialogBody"></div>
+  </dialog>
+
+  <!-- Pilha de Notificações Toast com Popover API (popover="manual") -->
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <!-- Rodapé com as Cores do Paraguai -->
+  <div class="paraguay-tricolor-bar" role="presentation"></div>
+  <footer class="app-footer">
+    <p>
+      <strong>Portal Paraguai · Pick &amp; Go</strong> — Especificação v0.1 (17/10/2026) · Piloto Ciudad del Este (5 Lojas · 10 Operadores 08h–18h) · Câmbio Real USD→BRL via Pix + Split 90% Loja / 7% Portal / 3% EPYX
+    </p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

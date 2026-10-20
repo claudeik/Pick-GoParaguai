@@ -64,9 +64,28 @@ export function criarApp(ctx: Contexto, opcoes: FastifyServerOptions = {}) {
       } else {
         const u = lerToken(token, ctx.config.segredoToken) ?? undefined;
         req.usuario = u && (u.perfil === 'cliente' || ctx.config.permitirDevLogin) ? u : undefined;
+        // Token emitido antes da exclusão da conta deixa de valer na hora.
+        if (req.usuario?.perfil === 'cliente') {
+          const c = await ctx.db.query<{ excluido_em: Date | null }>('select excluido_em from cliente where id = $1', [req.usuario.sub]);
+          if (!c.rows[0] || c.rows[0].excluido_em) req.usuario = undefined;
+        }
       }
     } catch {
       req.usuario = undefined;
+    }
+  });
+
+  // CORS só para o app instalado: no navegador a API fica no mesmo endereço do site.
+  app.addHook('onRequest', async (req, rep) => {
+    const origem = req.headers.origin;
+    if (!origem || !ctx.config.origensApp.includes(origem)) return;
+    rep.header('access-control-allow-origin', origem);
+    rep.header('vary', 'origin');
+    if (req.method === 'OPTIONS') {
+      rep.header('access-control-allow-methods', 'GET, POST, PUT, PATCH, DELETE');
+      rep.header('access-control-allow-headers', 'authorization, content-type, idempotency-key, accept');
+      rep.header('access-control-max-age', '600');
+      return rep.code(204).send();
     }
   });
 

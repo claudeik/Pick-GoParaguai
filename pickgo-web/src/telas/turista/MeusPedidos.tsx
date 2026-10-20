@@ -21,7 +21,7 @@ const ROTULO_ETAPA: Record<string, string> = {
 
 const AGUARDA_RETIRADA = new Set(['EM_SEPARACAO', 'EM_COLETA', 'EM_TESTE_LOJA', 'PRONTO_RETIRADA']);
 
-export function MeusPedidos({ aoPagar, irParaCentral }: { aoPagar: (id: string) => void; irParaCentral: () => void }) {
+export function MeusPedidos({ aoPagar, irParaCentral }: { aoPagar: (id: string) => void; irParaCentral?: () => void }) {
   const api = useApiCliente();
   // A lista traz o resumo; os detalhes (itens e QR) vêm de GET /pedidos/{id}.
   const lista = useCarga(
@@ -62,7 +62,7 @@ function CartaoPedido({
 }: {
   pedido: Pedido;
   aoPagar: (id: string) => void;
-  irParaCentral: () => void;
+  irParaCentral?: () => void;
   aoMudar: () => Promise<void>;
 }) {
   const api = useApiCliente();
@@ -154,7 +154,7 @@ function CartaoPedido({
                 📍 {p.cliente_chegou_em ? `Aviso enviado às ${fmtData(p.cliente_chegou_em).split(' ')[1]}` : 'Avisar que cheguei'}
               </button>
             )}
-            {(p.estado === 'PRONTO_RETIRADA' || p.estado === 'LIBERADO_SAIDA') && (
+            {irParaCentral && (p.estado === 'PRONTO_RETIRADA' || p.estado === 'LIBERADO_SAIDA') && (
               <button type="button" className="btn btn-sm btn-outline" onClick={irParaCentral}>
                 Abrir a conferência da equipe (teste)
               </button>

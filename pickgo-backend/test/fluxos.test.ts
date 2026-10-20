@@ -18,10 +18,10 @@ describe('split (critério 14.2)', () => {
     assert.equal(de('REPASSE_LOJA'), 5_100_000);
     assert.equal(de('COMISSAO_PORTAL'), 450_000);
     assert.equal(de('COMISSAO_EPYX'), 450_000);
-    assert.equal(de('TAXA_PIX'), 60_000);
+    assert.equal(de('TAXA_PIX'), 90_000);
     assert.equal(de('TAXA_CAMBIO'), 30_000);
     assert.equal(partes.reduce((s, p) => s + p.valor, 0), totais.total);
-    assert.equal(totais.total, 6_090_000);
+    assert.equal(totais.total, 6_120_000);
   });
 });
 

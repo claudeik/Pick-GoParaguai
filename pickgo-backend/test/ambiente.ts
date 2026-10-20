@@ -11,6 +11,8 @@ import { processarCampanhas } from '../src/servicos/campanhas.ts';
 import { despacharMensagens, processarEventoCrm } from '../src/servicos/crm.ts';
 import { publicarEventos } from '../src/servicos/rotinas.ts';
 import { ProvedorPixSimulado, assinar } from '../src/integracoes/pix.ts';
+import { PushSimulado } from '../src/integracoes/push.ts';
+import { despacharPush } from '../src/servicos/push.ts';
 import { semearDemo } from '../src/seed.ts';
 
 /** Gera um CPF válido a partir de 9 dígitos. */
@@ -40,10 +42,12 @@ export async function criarAmbiente(extra: Partial<Pick<Contexto, 'verificarOidc
     agora: () => agora,
     identidade: new GestorMemoria(),
     mensageiro: new MensageiroSimulado(),
+    push: new PushSimulado(),
     ...extra,
   };
   const app = criarApp(ctx);
   const mensageiro = ctx.mensageiro as MensageiroSimulado;
+  const push = ctx.push as PushSimulado;
 
   /** Roda o que o servidor roda a cada ciclo: publica eventos (CRM) e envia mensagens. */
   async function rodarRotinas() {
@@ -52,6 +56,7 @@ export async function criarAmbiente(extra: Partial<Pick<Contexto, 'verificarOidc
     });
     await processarCampanhas(ctx);
     const r = await despacharMensagens(ctx, ctx.mensageiro);
+    await despacharPush(ctx);
     // Mais um ciclo: a situação dos envios da campanha acompanha a entrega.
     await processarCampanhas(ctx);
     return r;
@@ -147,6 +152,7 @@ export async function criarAmbiente(extra: Partial<Pick<Contexto, 'verificarOidc
     equipe,
     acesso,
     mensageiro,
+    push,
     rodarRotinas,
     twilio,
     novoCliente,

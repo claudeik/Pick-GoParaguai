@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { ehAppInstalado, lerCodigoNativo } from '../nativo.ts';
 
-// Leitura de código de barras e QR pela câmera (BarcodeDetector do navegador).
+// Leitura de código de barras e QR pela câmera: no navegador, BarcodeDetector (Chrome e
+// Android); no app instalado, o leitor nativo do ML Kit, que também funciona no iPhone.
 
 interface DetectorDeCodigo {
   detect(fonte: CanvasImageSource): Promise<{ rawValue: string }[]>;
@@ -11,9 +13,43 @@ declare global {
   }
 }
 
-export const temCamera = () => typeof window.BarcodeDetector === 'function' && !!navigator.mediaDevices;
+export const temCamera = () => ehAppInstalado() || (typeof window.BarcodeDetector === 'function' && !!navigator.mediaDevices);
 
-export function LeitorCamera({ aoLer, aoFechar }: { aoLer: (codigo: string) => void; aoFechar: () => void }) {
+export function LeitorCamera(props: { aoLer: (codigo: string) => void; aoFechar: () => void }) {
+  return ehAppInstalado() ? <LeitorNativo {...props} /> : <LeitorNavegador {...props} />;
+}
+
+/** O leitor nativo abre em tela cheia e lê um código por vez. */
+function LeitorNativo({ aoLer, aoFechar }: { aoLer: (codigo: string) => void; aoFechar: () => void }) {
+  const [erro, setErro] = useState<string | null>(null);
+  const ref = useRef({ aoLer, aoFechar });
+  ref.current = { aoLer, aoFechar };
+
+  useEffect(() => {
+    let ativo = true;
+    lerCodigoNativo()
+      .then((v) => {
+        if (!ativo) return;
+        if (v) ref.current.aoLer(v);
+        ref.current.aoFechar();
+      })
+      .catch((e: unknown) => ativo && setErro(e instanceof Error ? e.message : String(e)));
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  return erro ? (
+    <div className="scanner">
+      <p>Não foi possível abrir a câmera: {erro}</p>
+      <button type="button" className="btn btn-sm btn-header-ghost" onClick={aoFechar}>
+        Fechar
+      </button>
+    </div>
+  ) : null;
+}
+
+function LeitorNavegador({ aoLer, aoFechar }: { aoLer: (codigo: string) => void; aoFechar: () => void }) {
   const video = useRef<HTMLVideoElement>(null);
   const [erro, setErro] = useState<string | null>(null);
   const aoLerRef = useRef(aoLer);

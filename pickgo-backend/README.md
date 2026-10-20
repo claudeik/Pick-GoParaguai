@@ -1,17 +1,30 @@
 # Pick & Go · backend (Fase 1)
 
-API do Portal Paraguai Pick & Go: catálogo, pedidos, Pix com split no ledger de dupla entrada, central de operação (coleta, teste da loja, entrega por QR), Scan & Go, ocorrências da regra 3.3.2 e painéis. Segue a especificação técnica v0.1 (split 85 / 7,5 / 7,5, mais 1% de Pix e 0,5% de câmbio pagos pelo comprador).
+API do Portal Paraguai Pick & Go: catálogo, pedidos, Pix com split no ledger de dupla entrada, central de operação (coleta, teste da loja, entrega por QR), Scan & Go, ocorrências da regra 3.3.2 e painéis. Segue a especificação técnica v0.1 (split 85 / 7,5 / 7,5, mais 1,5% de Pix e 0,5% de câmbio pagos pelo comprador).
 
 ## Rodar
 
 ```bash
 npm install
 npm run dev      # http://127.0.0.1:3333 · banco PGlite em .data/pglite
-npm test         # 54 testes: critérios 14.2, catálogo, lista mestre, acesso, CRM, campanhas e ERP
+npm test         # 64 testes: critérios 14.2, catálogo, lista mestre, acesso, login do cliente, app móvel, CRM, campanhas e ERP
 npm run typecheck
 ```
 
 Requer Node 22.18 ou superior (roda TypeScript direto, sem build). Em desenvolvimento, um banco vazio recebe as 5 lojas e os 15 produtos do piloto. Para começar do zero, pare o servidor e apague `.data/`. O `npm run seed` faz o mesmo sem subir a API, mas não roda com o servidor ligado, porque o PGlite só aceita um processo por pasta.
+
+## Login do cliente (turista)
+
+O cliente cria a conta com CPF (`POST /v1/clientes`). Quem já tem cadastro entra com um código de 6 dígitos enviado ao WhatsApp do cadastro: `POST /v1/clientes/codigo` (CPF) e `POST /v1/clientes/entrar` (CPF e código), que devolve o mesmo token do cadastro. O código vale 10 minutos e uma única vez, cai depois de 5 erros e só pode ser pedido de novo depois de 1 minuto. Um código novo invalida o anterior. O banco guarda só o hash. Vai pelo outbox como o modelo `codigo_acesso` e é enviado mesmo sem aceite de mensagens, porque a própria pessoa pediu. Em desenvolvimento a resposta traz `codigo_dev`, porque sem Twilio o WhatsApp é simulado. Com a Twilio real, cadastre o modelo `codigo_acesso` na Meta (categoria autenticação).
+
+## App móvel (Android e iOS)
+
+O app do turista nas lojas é o `pickgo-web` empacotado com o Capacitor (guia em `../pickgo-web/APP-LOJAS.md`). Na API:
+
+- **CORS** só para as origens do app instalado (`ORIGENS_APP`). No navegador a API fica no mesmo endereço do site.
+- **Aparelhos**: `PUT /v1/clientes/eu/dispositivos` registra o token de push e `POST /v1/clientes/eu/dispositivos/remover` remove o registro ao sair. Todo aviso transacional do pedido gera um push por aparelho (outbox `push_envio`), enviado pelo FCM no Android e pelo APNs no iOS. Token recusado apaga o aparelho. Sem credenciais, o envio é simulado.
+- **Exclusão da conta**: `DELETE /v1/clientes/eu` apaga nome, CPF, WhatsApp, e-mail, aparelhos e códigos, revoga os aceites, cancela Pix em aberto e derruba o token na hora. Os pedidos ficam anônimos. A exclusão é recusada com pedido pago não retirado. O CPF fica livre para uma conta nova.
+- **Conta da revisão das lojas**: `REVISAO_CPF` e `REVISAO_CODIGO` deixam um CPF entrar com código fixo, sem WhatsApp.
 
 ## Acesso da equipe (Keycloak)
 
@@ -84,7 +97,7 @@ ERP da empresa Portal Paraguai, separado do estoque das lojas (que fica na lista
 | `TOKEN_SECRET`, `CPF_HASH_SECRET`, `PIX_WEBHOOK_SECRET` | `dev-…` | Obrigatórios em produção |
 | `COTACAO_USD_BRL_E4` | `55000` | US$ 1 = R$ 5,50 [D1] |
 | `COMISSAO_PORTAL_BPS`, `COMISSAO_EPYX_BPS` | `750` | 7,5% cada [D4] |
-| `TAXA_PIX_BPS`, `TAXA_CAMBIO_BPS` | `100`, `50` | Pagas pelo comprador [D4] |
+| `TAXA_PIX_BPS`, `TAXA_CAMBIO_BPS` | `150`, `50` | Pagas pelo comprador [D4] |
 | `PIX_VALIDADE_MIN` | `30` | Validade da cobrança |
 | `PRAZO_RETIRADA_HORAS` | `72` | Depois disso o pedido vira `NAO_RETIRADO` |
 | `COTA_USD_CENTAVOS` | `50000` | Aviso de cota por terra [D3] |
@@ -135,6 +148,5 @@ O catálogo de cada loja vem do sistema dela, com preço em dólar, estoque, có
 - Estorno parcial (RF-09).
 - Provedor de Pix real e liquidação com a Cambio Real [D1].
 - Login OIDC no lugar do `/dev/login`.
-- Login do cliente por código no WhatsApp: hoje, CPF já cadastrado não recebe token.
 - Barramento de eventos: o outbox só registra no log.
 - Fases 2 a 4: carteira, KYC, envio ao Brasil, CRM, campanhas.

@@ -2,6 +2,7 @@ import type { Contexto } from '../contexto.ts';
 import { MODELOS, type IdModelo } from '../crm/modelos.ts';
 import type { Consulta } from '../db.ts';
 import type { Canal, Mensageiro } from '../integracoes/mensageria.ts';
+import { enfileirarPush } from './push.ts';
 import { auditar, type Ator } from './registro.ts';
 
 // CRM e atendimento (seções 3.9 e 3.10).
@@ -123,6 +124,10 @@ export async function enfileirarMensagem(q: Consulta, d: NovaMensagem) {
     ],
   );
   await q.query('update contato set ultimo_contato_em = now(), atualizado_em = now() where id = $1', [c.id]);
+  // Aviso do pedido também vai por push para os aparelhos com o app (o código de login não).
+  if (c.cliente_id && d.finalidade === 'TRANSACIONAL' && d.modelo !== 'codigo_acesso') {
+    await enfileirarPush(q, { clienteId: c.cliente_id, titulo: d.assunto ?? m?.assunto ?? 'Pick & Go', corpo: texto, pedidoId: d.pedidoId ?? null });
+  }
   return r.rows[0]!;
 }
 
@@ -183,7 +188,11 @@ async function dadosPedido(q: Consulta, id: string): Promise<DadosPedido | null>
 
 /** Jornadas automáticas por evento do pedido (RF-34). Roda na transação que publica o evento. */
 export async function processarEventoCrm(q: Consulta, ctx: Pick<Contexto, 'config' | 'agora'>, e: { tipo: string; payload: Record<string, unknown> }) {
+  // Conta excluída: nada de contato nem mensagem (o contato seria recriado com os dados anônimos).
+  const excluido = async (clienteId: string) =>
+    !!(await q.query('select 1 from cliente where id = $1 and excluido_em is not null', [clienteId])).rows[0];
   if (e.tipo === 'ClienteCadastrado') {
+    if (await excluido(String(e.payload.cliente_id))) return;
     const c = await contatoDoCliente(q, String(e.payload.cliente_id));
     await enfileirarMensagem(q, { contatoId: c.id, finalidade: 'TRANSACIONAL', modelo: 'boas_vindas', variaveis: { nome: c.nome.split(' ')[0]! }, autor: 'sistema' });
     return;
@@ -191,7 +200,7 @@ export async function processarEventoCrm(q: Consulta, ctx: Pick<Contexto, 'confi
   const pedidoId = e.payload.pedido_id as string | undefined;
   if (!pedidoId) return;
   const p = await dadosPedido(q, pedidoId);
-  if (!p) return;
+  if (!p || (await excluido(p.cliente_id))) return;
   const c = await contatoDoCliente(q, p.cliente_id);
   const msg = (modelo: IdModelo, variaveis: Record<string, string> = {}) =>
     enfileirarMensagem(q, { contatoId: c.id, finalidade: 'TRANSACIONAL', modelo, variaveis: { codigo: p.codigo, ...variaveis }, pedidoId, autor: 'sistema' });
@@ -305,10 +314,11 @@ export async function despacharMensagens(ctx: Contexto, mensageiro: Mensageiro):
             new Date(ctx.agora().getTime() - 24 * 3_600_000),
           ])
         ).rows[0];
-      const confirmacaoOptout = m.modelo === 'optout';
+      // Confirmação do PARAR e código de login: a própria pessoa pediu, valem sem aceite de mensagens.
+      const pedidoPelaPessoa = m.modelo === 'optout' || m.modelo === 'codigo_acesso';
       let motivo: string | null = null;
       if (!m.destino) motivo = 'contato sem endereço para este canal';
-      else if (!permitidos.has(m.canal) && !conversa && !confirmacaoOptout) {
+      else if (!permitidos.has(m.canal) && !conversa && !pedidoPelaPessoa) {
         motivo = c.optout_canais.includes(m.canal) ? 'pessoa pediu para parar neste canal' : 'sem consentimento para este canal';
       } else if (m.finalidade === 'MARKETING') {
         // Cada campanha conta uma vez, mesmo passando por vários canais da cascata.

@@ -7,6 +7,7 @@ import type { Usuario } from './auth.ts';
 import type { GestorIdentidade } from './integracoes/identidade.ts';
 import type { Mensageiro } from './integracoes/mensageria.ts';
 import type { ProvedorPix } from './integracoes/pix.ts';
+import type { EnviadorPush } from './integracoes/push.ts';
 
 /** Dependências compartilhadas pelas rotas e rotinas. `agora` é injetável nos testes. */
 export interface Contexto {
@@ -18,6 +19,8 @@ export interface Contexto {
   identidade: GestorIdentidade;
   /** WhatsApp, SMS e e-mail: Twilio, ou simulado sem credenciais. */
   mensageiro: Mensageiro;
+  /** Notificação push do app (FCM e APNs), ou simulada sem credenciais. */
+  push: EnviadorPush;
   /** Valida tokens do Keycloak; ausente quando o Keycloak não está configurado. */
   verificarOidc?: (token: string) => Promise<Usuario | null>;
 }

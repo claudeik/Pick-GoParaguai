@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Pick &amp; Go</string>
+    <string name="title_activity_main">Pick &amp; Go</string>
+    <string name="package_name">br.com.epyx.pickgo</string>
+    <string name="custom_url_scheme">br.com.epyx.pickgo</string>
+</resources>

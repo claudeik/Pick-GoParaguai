@@ -50,6 +50,21 @@ export interface Config {
   pixChave: string;
   pixRecebedor: string;
   pixCidade: string;
+  /** Origens com CORS liberado: o app instalado (capacitor://localhost no iOS, https://localhost no Android). */
+  origensApp: string[];
+  /** Identificador do app nas lojas (bundle id do iOS e applicationId do Android). */
+  appId: string;
+  /** JSON da conta de serviço do Firebase (push no Android). */
+  fcmContaServico: string | undefined;
+  /** Chave .p8 do APNs (push no iOS), com o Key ID e o Team ID da conta Apple Developer. */
+  apnsChave: string | undefined;
+  apnsKeyId: string | undefined;
+  apnsTeamId: string | undefined;
+  /** false = ambiente de testes da Apple (build de desenvolvimento). */
+  apnsProducao: boolean;
+  /** Conta da revisão da App Store e da Play Store: CPF cadastrado que entra com código fixo, sem WhatsApp. */
+  revisaoCpf: string | undefined;
+  revisaoCodigo: string | undefined;
 }
 
 function num(nome: string, padrao: number): number {
@@ -80,7 +95,7 @@ export function carregarConfig(sobrescrever: Partial<Config> = {}): Config {
     cotacaoUsdBrlE4: num('COTACAO_USD_BRL_E4', 55000),
     comissaoPortalBps: num('COMISSAO_PORTAL_BPS', 750),
     comissaoEpyxBps: num('COMISSAO_EPYX_BPS', 750),
-    taxaPixBps: num('TAXA_PIX_BPS', 100),
+    taxaPixBps: num('TAXA_PIX_BPS', 150),
     taxaCambioBps: num('TAXA_CAMBIO_BPS', 50),
     validadePixMinutos: num('PIX_VALIDADE_MIN', 30),
     prazoRetiradaHoras: num('PRAZO_RETIRADA_HORAS', 72),
@@ -104,6 +119,15 @@ export function carregarConfig(sobrescrever: Partial<Config> = {}): Config {
     pixChave: process.env.PIX_CHAVE ?? '00000000-0000-0000-0000-000000000000',
     pixRecebedor: process.env.PIX_RECEBEDOR ?? 'PORTAL PARAGUAI',
     pixCidade: process.env.PIX_CIDADE ?? 'FOZ DO IGUACU',
+    origensApp: (process.env.ORIGENS_APP ?? 'capacitor://localhost,https://localhost,http://localhost:5181').split(',').map((o) => o.trim()).filter(Boolean),
+    appId: process.env.APP_ID ?? 'br.com.epyx.pickgo',
+    fcmContaServico: process.env.FCM_CONTA_SERVICO || undefined,
+    apnsChave: process.env.APNS_CHAVE || undefined,
+    apnsKeyId: process.env.APNS_KEY_ID || undefined,
+    apnsTeamId: process.env.APNS_TEAM_ID || undefined,
+    apnsProducao: process.env.APNS_PRODUCAO === 'true',
+    revisaoCpf: process.env.REVISAO_CPF?.replace(/\D/g, '') || undefined,
+    revisaoCodigo: process.env.REVISAO_CODIGO || undefined,
     ...sobrescrever,
   };
 }

@@ -734,6 +734,10 @@ interface Opcoes {
   idempotente?: boolean;
 }
 
+// No navegador a API fica no mesmo endereço (proxy do Vite). O app instalado no celular
+// não tem proxy: usa o endereço público em VITE_API_URL (ex.: https://api.pickgo.com.py).
+const BASE_API = `${(import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')}/v1`;
+
 async function chamar<T>(metodo: string, caminho: string, o: Opcoes = {}): Promise<T> {
   const headers: Record<string, string> = { accept: 'application/json' };
   if (o.token) headers.authorization = `Bearer ${o.token}`;
@@ -742,7 +746,7 @@ async function chamar<T>(metodo: string, caminho: string, o: Opcoes = {}): Promi
 
   let resp: Response;
   try {
-    resp = await fetch(`/v1${caminho}`, {
+    resp = await fetch(`${BASE_API}${caminho}`, {
       method: metodo,
       headers,
       body: o.corpo === undefined ? undefined : JSON.stringify(o.corpo),
@@ -813,7 +817,15 @@ export function criarApi(token: string | null) {
       aceite_mensagens_sms: boolean;
       versao_termos: string;
     }) => chamar<{ cliente_id: string; token: string }>('POST', '/clientes', { corpo: d }),
+    /** Envia o código de acesso ao WhatsApp do cadastro; `codigo_dev` só vem em desenvolvimento. */
+    pedirCodigo: (cpf: string) =>
+      chamar<{ enviado_para: string; validade_min: number; codigo_dev?: string }>('POST', '/clientes/codigo', { corpo: { cpf } }),
+    entrar: (cpf: string, codigo: string) => chamar<{ cliente_id: string; token: string }>('POST', '/clientes/entrar', { corpo: { cpf, codigo } }),
     eu: () => chamar<{ id: string; nome: string; cpf_mascarado: string; whatsapp: string; email: string | null }>('GET', '/clientes/eu', o()),
+    registrarDispositivo: (d: { plataforma: 'android' | 'ios'; token: string }) => chamar<void>('PUT', '/clientes/eu/dispositivos', o({ corpo: d })),
+    removerDispositivo: (t: string) => chamar<void>('POST', '/clientes/eu/dispositivos/remover', o({ corpo: { token: t } })),
+    /** Exclui a conta (App Store e LGPD): apaga os dados pessoais; os pedidos ficam anônimos. */
+    excluirConta: () => chamar<void>('DELETE', '/clientes/eu', o()),
     devLogin: (d: { perfil?: Perfil; perfil_acesso?: string; sub: string; nome?: string; loja_id?: string }) =>
       chamar<{ token: string }>('POST', '/dev/login', { corpo: d }),
 
@@ -921,7 +933,7 @@ export function criarApi(token: string | null) {
     erpLivro: (tipo: 'ventas' | 'compras', periodo: string) => chamar<LivroIva>('GET', `/erp/livros/${tipo}${qs({ periodo })}`, o()),
     /** CSV do livro (RG 90): baixa com o token, porque a rota exige login. */
     erpLivroCsv: async (tipo: 'ventas' | 'compras', periodo: string) => {
-      const r = await fetch(`/v1/erp/livros/${tipo}?periodo=${periodo}&formato=csv`, { headers: token ? { authorization: `Bearer ${token}` } : {} });
+      const r = await fetch(`${BASE_API}/erp/livros/${tipo}?periodo=${periodo}&formato=csv`, { headers: token ? { authorization: `Bearer ${token}` } : {} });
       if (!r.ok) throw new ErroApi(r.status, 'erro', `HTTP ${r.status}`);
       return r.text();
     },

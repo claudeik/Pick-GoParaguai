@@ -6,7 +6,7 @@ import { useSessao } from '../../sessao.tsx';
 // T12 · RF-18 e RF-41: cadastro mínimo com aceite explícito dos termos e das mensagens.
 const VERSAO_TERMOS = 'v1-2026-10';
 
-export function Cadastro() {
+export function Cadastro({ aoEntrar }: { aoEntrar: (cpf?: string) => void }) {
   const { entrarCliente, avisar } = useSessao();
   const [f, setF] = useState({ cpf: '', nome: '', whatsapp: '', email: '', termos: false, whats: false, mail: false, sms: false });
   const [erro, setErro] = useState<string | null>(null);
@@ -36,7 +36,8 @@ export function Cadastro() {
       avisar(`Bem-vindo, ${f.nome.split(' ')[0]}! Cadastro concluído.`);
     } catch (e) {
       if (e instanceof ErroApi && e.codigo === 'cliente-ja-cadastrado') {
-        setErro('Este CPF já tem cadastro. O login por código no WhatsApp entra na Fase 2; por enquanto, use outro CPF de teste.');
+        avisar('Este CPF já tem cadastro. Entre com o código enviado ao seu WhatsApp.');
+        aoEntrar(f.cpf);
       } else {
         setErro(e instanceof Error ? e.message : String(e));
       }
@@ -107,6 +108,12 @@ export function Cadastro() {
           </button>
           <p className="nota">
             Ambiente de teste: use um CPF válido gerado para testes (ex.: 529.982.247-25). O CPF é guardado só como hash.
+          </p>
+          <p className="nota">
+            Já tem cadastro?{' '}
+            <button type="button" className="link" onClick={() => aoEntrar()}>
+              Entrar com código no WhatsApp
+            </button>
           </p>
         </form>
       </Cartao>

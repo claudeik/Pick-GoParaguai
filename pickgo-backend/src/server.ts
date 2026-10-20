@@ -7,8 +7,10 @@ import { GestorKeycloak, GestorMemoria, type GestorIdentidade } from './integrac
 import { ProvedorPixSimulado } from './integracoes/pix.ts';
 import { semearDemo } from './seed.ts';
 import { criarMensageiro } from './integracoes/mensageria.ts';
+import { criarEnviadorPush } from './integracoes/push.ts';
 import { processarCampanhas } from './servicos/campanhas.ts';
 import { despacharMensagens, lembrarRetiradas, processarEventoCrm } from './servicos/crm.ts';
+import { despacharPush } from './servicos/push.ts';
 import { expirarCobrancas, marcarNaoRetirados, publicarEventos } from './servicos/rotinas.ts';
 
 const config = carregarConfig();
@@ -51,6 +53,7 @@ const ctx: Contexto = {
   identidade,
   verificarOidc,
   mensageiro: criarMensageiro(config),
+  push: criarEnviadorPush(config),
 };
 
 const app = criarApp(ctx, { logger: { level: process.env.LOG_LEVEL ?? 'info' } });
@@ -72,6 +75,8 @@ const ciclo = setInterval(async () => {
     if (camp.disparadas || camp.passos) app.log.info(camp, 'campanhas');
     const envio = await despacharMensagens(ctx, ctx.mensageiro);
     if (envio.enviadas || envio.bloqueadas || envio.falhas) app.log.info(envio, 'mensagens');
+    const push = await despacharPush(ctx);
+    if (push.enviadas || push.falhas) app.log.info(push, 'push');
   } catch (e) {
     app.log.error({ err: e }, 'falha nas rotinas');
   } finally {

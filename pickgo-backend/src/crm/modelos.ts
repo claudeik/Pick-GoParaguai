@@ -45,6 +45,10 @@ export const MODELOS = {
     assunto: 'Recebemos sua mensagem',
     texto: (v) => `Recebemos seu pedido de atendimento (chamado ${v.numero}). Respondemos em breve por aqui.`,
   },
+  codigo_acesso: {
+    assunto: 'Seu código de acesso',
+    texto: (v) => `Seu código de acesso ao Pick & Go é ${v.codigo}. Vale por 10 minutos. Não compartilhe com ninguém, nem com a nossa equipe.`,
+  },
   optout: {
     assunto: 'Mensagens desligadas',
     texto: () => 'Pronto, você não vai mais receber mensagens por este canal. Para voltar, fale com a gente pelo app.',

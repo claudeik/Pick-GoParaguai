@@ -28,6 +28,8 @@ const novoPedido = z.object({
   cupom: z.string().trim().max(40).optional(),
   /** Código do link curto da campanha que trouxe o cliente (atribuição, RF-31). */
   campanha_link: z.string().trim().max(40).optional(),
+  /** Código do link do vídeo (/v/{codigo}) que trouxe o cliente (RF-31). */
+  video_link: z.string().trim().max(12).optional(),
 });
 
 interface ProdutoLinha {
@@ -151,6 +153,22 @@ export const rotasPedidos: Modulo = (app, { db, config, agora }) => {
       if (campanhaId) {
         await q.query('update pedido set campanha_id = $2 where id = $1', [pedidoId, campanhaId]);
         await registrarConversao(q, campanhaId, u.sub, pedidoId);
+      }
+      // Origem no vídeo: o produto do link, se está no pedido, senão outro produto do mesmo vídeo.
+      if (d.video_link) {
+        const vp = await q.query<{ id: string }>(
+          `select vp2.id from video_produto vp join video_produto vp2 on vp2.video_id = vp.video_id
+           where vp.codigo = $1 and vp2.produto_id = any($2::uuid[]) order by (vp2.id = vp.id) desc, vp2.momento_s limit 1`,
+          [d.video_link.toUpperCase(), itens.map((i) => i.produto.id)],
+        );
+        if (vp.rows[0]) {
+          await q.query('update pedido set video_produto_id = $2 where id = $1', [pedidoId, vp.rows[0].id]);
+          await q.query(
+            `update video_interesse set comprou_em = now() where cliente_id = $1 and comprou_em is null
+             and video_produto_id in (select id from video_produto where video_id = (select video_id from video_produto where id = $2))`,
+            [u.sub, vp.rows[0].id],
+          );
+        }
       }
       await publicar(q, 'PedidoCriado', { pedido_id: pedidoId, codigo, modo: d.modo }, pedidoId);
       await auditar(q, u, 'pedido.criar', 'pedido', pedidoId, { modo: d.modo, itens: d.itens.length });

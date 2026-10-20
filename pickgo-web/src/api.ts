@@ -714,6 +714,68 @@ export interface PainelErp {
 }
 
 /** Erro no formato problem+json devolvido pela API. */
+// Vídeos do YouTube com produtos e link inteligente (T20 a T22 · RF-31, RF-39 a RF-41)
+
+export type EstadoVideo = 'RASCUNHO' | 'PUBLICADO' | 'ARQUIVADO';
+
+export interface MetricasVideo {
+  cliques: number;
+  interessados: number;
+  pedidos: number;
+  receita_brl_centavos: number;
+}
+
+export interface VideoResumo {
+  id: string;
+  youtube_id: string;
+  titulo: string;
+  canal: string | null;
+  estado: EstadoVideo;
+  publicado_em: string | null;
+  criado_em: string;
+  produtos: number;
+  metricas: MetricasVideo;
+}
+
+export interface ProdutoDoVideo {
+  id: string;
+  produto_id: string;
+  produto_nome: string;
+  preco_usd_centavos: number;
+  foto_url: string | null;
+  loja_id: string;
+  loja_nome: string;
+  momento_s: number;
+  codigo: string;
+  oferta_codigo: string | null;
+  oferta_titulo: string | null;
+  oferta_preco_usd_centavos: number | null;
+  oferta_valendo: boolean;
+}
+
+export interface VideoDetalhe extends Omit<VideoResumo, 'produtos'> {
+  descricao: string | null;
+  url_youtube: string;
+  produtos: (ProdutoDoVideo & { oferta_id: string | null; link: string; metricas: MetricasVideo })[];
+  texto_youtube: { descricao: string; comentario_fixado: string };
+}
+
+export interface VideoPublicado {
+  id: string;
+  youtube_id: string;
+  titulo: string;
+  canal: string | null;
+  descricao: string | null;
+  publicado_em: string;
+  produtos: ProdutoDoVideo[];
+}
+
+export interface ProdutoNoVideo {
+  produto_id: string;
+  momento?: string | number;
+  oferta_id?: string | null;
+}
+
 export class ErroApi extends Error {
   status: number;
   codigo: string;
@@ -804,6 +866,21 @@ export function criarApi(token: string | null) {
       chamar<{ sincronizacoes: Sincronizacao[]; lojas: EstadoIntegracao[] }>('GET', `/loja/sincronizacoes${qs({ loja_id: lojaId })}`, o()),
     gerarChaveIntegracao: (lojaId: string) =>
       chamar<{ loja_id: string; chave: string }>('POST', `/lojas/${encodeURIComponent(lojaId)}/chave-integracao`, o({ corpo: {} })),
+
+    // Vídeos (equipe: campanhas.ver e campanhas.gerenciar)
+    videos: () => chamar<{ videos: VideoResumo[] }>('GET', '/videos', o()),
+    video: (id: string) => chamar<VideoDetalhe>('GET', `/videos/${id}`, o()),
+    criarVideo: (d: { url: string; titulo?: string; descricao?: string; produtos?: ProdutoNoVideo[]; publicar?: boolean }) =>
+      chamar<VideoDetalhe>('POST', '/videos', o({ corpo: d })),
+    alterarVideo: (id: string, d: { titulo?: string; descricao?: string | null; estado?: EstadoVideo }) => chamar<VideoDetalhe>('PATCH', `/videos/${id}`, o({ corpo: d })),
+    produtosDoVideo: (id: string, produtos: ProdutoNoVideo[]) => chamar<VideoDetalhe>('PUT', `/videos/${id}/produtos`, o({ corpo: { produtos } })),
+    campanhaDoVideo: (id: string, d: { segmento?: Segmento; canais?: CanalCampanha[]; enviar?: 'agora' }) =>
+      chamar<{ id: string; nome: string; estado: string }>('POST', `/videos/${id}/campanha`, o({ corpo: d })),
+    // Vídeos (turista e público)
+    videosPublicados: () => chamar<{ videos: VideoPublicado[] }>('GET', '/videos/publicados'),
+    abrirVideo: (codigo: string, clique = true) =>
+      chamar<{ video_id: string; produto_id: string; cupom: string | null }>('POST', '/videos/abrir', o({ corpo: { codigo, clique } })),
+    produto: (id: string) => chamar<Produto>('GET', `/produtos/${id}`),
 
     // Identidade
     cadastrar: (d: {
@@ -958,6 +1035,7 @@ export function criarApi(token: string | null) {
       itens: { produto_id?: string; codigo_barras?: string; quantidade: number }[];
       cupom?: string;
       campanha_link?: string;
+      video_link?: string;
     }) => chamar<Pedido>('POST', '/pedidos', o({ corpo: d, idempotente: true })),
     gerarPix: (id: string) => chamar<Pedido>('POST', `/pedidos/${id}/pix`, o({ idempotente: true })),
     meusPedidos: () => chamar<{ pedidos: PedidoResumo[] }>('GET', '/pedidos', o()),

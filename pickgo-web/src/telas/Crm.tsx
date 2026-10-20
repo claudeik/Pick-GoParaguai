@@ -7,11 +7,12 @@ import { Campanhas } from './crm/Campanhas.tsx';
 import { Captacao } from './crm/Captacao.tsx';
 import { Ficha } from './crm/Ficha.tsx';
 import { ETAPAS, Funil } from './crm/Funil.tsx';
+import { Videos } from './crm/Videos.tsx';
 
 // CRM e atendimento (T17, T18): funil e onboarding (com o quadro do Gothan),
 // atendimento multicanal e captação de leads.
 
-type Aba = 'funil' | 'atendimento' | 'campanhas' | 'captacao';
+type Aba = 'funil' | 'atendimento' | 'campanhas' | 'videos' | 'captacao';
 
 export function Crm() {
   const { api, erro, precisaLogin } = useApiEquipe('admin', 'admin-portal');
@@ -44,10 +45,11 @@ export function Crm() {
             ['funil', '🗂️ Funil e onboarding'],
             ['atendimento', '💬 Atendimento'],
             ['campanhas', '📣 Campanhas e ofertas'],
+            ['videos', '🎬 Vídeos do YouTube'],
             ['captacao', '🧲 Captação de leads'],
           ] as [Aba, string][]
         )
-          .filter(([id]) => id !== 'campanhas' || pode('campanhas.ver'))
+          .filter(([id]) => (id !== 'campanhas' && id !== 'videos') || pode('campanhas.ver'))
           .map(([id, rotulo]) => (
           <button key={id} type="button" role="tab" aria-selected={aba === id} className={`sub-tab ${aba === id ? 'active' : ''}`} onClick={() => setAba(id)}>
             {rotulo}
@@ -65,6 +67,7 @@ export function Crm() {
           </>
         )}
         {aba === 'campanhas' && <Campanhas api={api} />}
+        {aba === 'videos' && <Videos api={api} />}
         {aba === 'atendimento' && <Atendimento api={api} ticketInicial={ticket} aoAbrirFicha={setFicha} />}
         {aba === 'captacao' && pode('crm.editar') && <Captacao api={api} aoCriar={() => setVersao((v) => v + 1)} />}
         {aba === 'captacao' && !pode('crm.editar') && <SemPermissao oQue="captação de leads" />}

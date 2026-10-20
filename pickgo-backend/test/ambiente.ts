@@ -29,7 +29,7 @@ export function cpf(base: number): string {
 let seq = 100_000_000;
 
 /** API em memória (PGlite) com os dados do piloto, para cada teste. */
-export async function criarAmbiente(extra: Partial<Pick<Contexto, 'verificarOidc' | 'identidade'>> = {}) {
+export async function criarAmbiente(extra: Partial<Pick<Contexto, 'verificarOidc' | 'identidade' | 'infoVideo'>> = {}) {
   const config = carregarConfig({ pgliteDir: undefined, databaseUrl: undefined });
   const db = await abrirDb({});
   await migrar(db);

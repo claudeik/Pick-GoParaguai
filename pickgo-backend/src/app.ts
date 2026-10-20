@@ -14,8 +14,9 @@ import { rotasPagamentos } from './rotas/pagamentos.ts';
 import { rotasPedidos } from './rotas/pedidos.ts';
 import { rotasRelatorios } from './rotas/relatorios.ts';
 import { rotasUsuarios } from './rotas/usuarios.ts';
+import { rotasVideos } from './rotas/videos.ts';
 
-const MODULOS = [rotasCatalogo, rotasClientes, rotasPedidos, rotasPagamentos, rotasOperacao, rotasOcorrencias, rotasRelatorios, rotasUsuarios, rotasCrm, rotasCampanhas, rotasErp];
+const MODULOS = [rotasCatalogo, rotasClientes, rotasPedidos, rotasPagamentos, rotasOperacao, rotasOcorrencias, rotasRelatorios, rotasUsuarios, rotasCrm, rotasCampanhas, rotasErp, rotasVideos];
 
 /** Corpo de erro no formato problem+json (RFC 9457); `codigo` repete o tipo para o app. */
 function problema(status: number, codigo: string, detalhe: string, extras?: Record<string, unknown>) {

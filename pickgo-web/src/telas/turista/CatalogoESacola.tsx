@@ -9,6 +9,8 @@ import { calcularPrevia, ResumoValores, type ItemSacola } from './previa.tsx';
 const CHAVE_SACOLA = 'pickgo.sacola';
 export const CHAVE_CUPOM = 'pickgo.cupom';
 export const CHAVE_LINK = 'pickgo.campanha_link';
+/** Código do link do vídeo que levou o produto à sacola (origem do pedido, RF-31). */
+export const CHAVE_VIDEO = 'pickgo.video_link';
 
 export function lerLocal(chave: string): string {
   try {
@@ -23,6 +25,18 @@ export function gravarLocal(chave: string, valor: string) {
     else localStorage.removeItem(chave);
   } catch {
     // sem armazenamento: vale só nesta aba
+  }
+}
+
+/** Põe um produto na sacola guardada (a aba Vídeos usa antes de abrir o catálogo). */
+export function colocarNaSacola(p: Produto) {
+  const s = lerSacola();
+  const i = s.find((x) => x.produto.id === p.id);
+  const nova = i ? s : [...s, { produto: p, quantidade: 1 }];
+  try {
+    localStorage.setItem(CHAVE_SACOLA, JSON.stringify(nova));
+  } catch {
+    // sem armazenamento: a sacola vale só nesta aba
   }
 }
 
@@ -108,12 +122,14 @@ export function CatalogoESacola({ config, aoGerarPix }: { config: ConfigPublica 
           itens: sacola.map((i) => ({ produto_id: i.produto.id, quantidade: i.quantidade })),
           cupom: cupom || undefined,
           campanha_link: lerLocal(CHAVE_LINK) || undefined,
+          video_link: lerLocal(CHAVE_VIDEO) || undefined,
         });
         // O pedido já reservou o estoque: esvazia a sacola antes do Pix, para um
         // erro na cobrança não levar a um segundo pedido. O diálogo gera o Pix.
         setSacola([]);
         setCupom('');
         gravarLocal(CHAVE_LINK, '');
+        gravarLocal(CHAVE_VIDEO, '');
         void produtos.recarregar();
         aoGerarPix(p.id);
         return p;

@@ -8,6 +8,7 @@ import type { GestorIdentidade } from './integracoes/identidade.ts';
 import type { Mensageiro } from './integracoes/mensageria.ts';
 import type { ProvedorPix } from './integracoes/pix.ts';
 import type { EnviadorPush } from './integracoes/push.ts';
+import type { BuscarInfoVideo } from './integracoes/youtube.ts';
 
 /** Dependências compartilhadas pelas rotas e rotinas. `agora` é injetável nos testes. */
 export interface Contexto {
@@ -21,6 +22,8 @@ export interface Contexto {
   mensageiro: Mensageiro;
   /** Notificação push do app (FCM e APNs), ou simulada sem credenciais. */
   push: EnviadorPush;
+  /** Título e canal do vídeo pelo oEmbed do YouTube; ausente nos testes (o título vem no pedido). */
+  infoVideo?: BuscarInfoVideo;
   /** Valida tokens do Keycloak; ausente quando o Keycloak não está configurado. */
   verificarOidc?: (token: string) => Promise<Usuario | null>;
 }

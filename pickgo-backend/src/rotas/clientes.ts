@@ -226,6 +226,7 @@ export const rotasClientes: Modulo = (app, { db, config, agora }) => {
       await q.query(`update push_envio set estado = 'DESCARTADA', motivo = 'conta excluída' where cliente_id = $1 and estado = 'PENDENTE'`, [u.sub]);
       await q.query('delete from dispositivo where cliente_id = $1', [u.sub]);
       await q.query('delete from codigo_acesso where cliente_id = $1', [u.sub]);
+      await q.query('delete from video_interesse where cliente_id = $1', [u.sub]);
       await auditar(q, u, 'cliente.excluir_conta', 'cliente', u.sub);
     });
     return rep.code(204).send();

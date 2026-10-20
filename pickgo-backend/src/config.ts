@@ -65,6 +65,8 @@ export interface Config {
   /** Conta da revisão da App Store e da Play Store: CPF cadastrado que entra com código fixo, sem WhatsApp. */
   revisaoCpf: string | undefined;
   revisaoCodigo: string | undefined;
+  /** Horas depois de abrir um produto pelo vídeo, sem comprar, para o lembrete (0 desliga). */
+  lembreteVideoHoras: number;
 }
 
 function num(nome: string, padrao: number): number {
@@ -83,7 +85,8 @@ export function carregarConfig(sobrescrever: Partial<Config> = {}): Config {
     if (producao) throw new Error(`${nome} é obrigatório em produção`);
     return `dev-${nome.toLowerCase()}`;
   };
-  if (producao && !process.env.DATABASE_URL) throw new Error('DATABASE_URL é obrigatório em produção');
+  // A demo (MODO_DEMO) aceita ficar sem banco: usa o Postgres em memória, que volta ao início a cada reinício.
+  if (producao && !process.env.DATABASE_URL && process.env.MODO_DEMO !== 'true') throw new Error('DATABASE_URL é obrigatório em produção');
   return {
     porta: num('PORT', 3333),
     databaseUrl: process.env.DATABASE_URL || undefined,
@@ -91,7 +94,8 @@ export function carregarConfig(sobrescrever: Partial<Config> = {}): Config {
     segredoToken: segredo('TOKEN_SECRET'),
     segredoCpf: segredo('CPF_HASH_SECRET'),
     segredoWebhookPix: segredo('PIX_WEBHOOK_SECRET'),
-    permitirDevLogin: !producao && process.env.ALLOW_DEV_LOGIN !== 'false',
+    // MODO_DEMO: demo publicada com dados fictícios (login de demonstração e Pix simulado, mesmo em produção).
+    permitirDevLogin: (!producao || process.env.MODO_DEMO === 'true') && process.env.ALLOW_DEV_LOGIN !== 'false',
     cotacaoUsdBrlE4: num('COTACAO_USD_BRL_E4', 55000),
     comissaoPortalBps: num('COMISSAO_PORTAL_BPS', 750),
     comissaoEpyxBps: num('COMISSAO_EPYX_BPS', 750),
@@ -128,6 +132,7 @@ export function carregarConfig(sobrescrever: Partial<Config> = {}): Config {
     apnsProducao: process.env.APNS_PRODUCAO === 'true',
     revisaoCpf: process.env.REVISAO_CPF?.replace(/\D/g, '') || undefined,
     revisaoCodigo: process.env.REVISAO_CODIGO || undefined,
+    lembreteVideoHoras: num('LEMBRETE_VIDEO_HORAS', 6),
     ...sobrescrever,
   };
 }

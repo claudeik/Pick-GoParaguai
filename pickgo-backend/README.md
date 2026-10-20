@@ -7,7 +7,7 @@ API do Portal Paraguai Pick & Go: catálogo, pedidos, Pix com split no ledger de
 ```bash
 npm install
 npm run dev      # http://127.0.0.1:3333 · banco PGlite em .data/pglite
-npm test         # 64 testes: critérios 14.2, catálogo, lista mestre, acesso, login do cliente, app móvel, CRM, campanhas e ERP
+npm test         # 74 testes: critérios 14.2, catálogo, lista mestre, acesso, login do cliente, app móvel, vídeos, CRM, campanhas e ERP
 npm run typecheck
 ```
 
@@ -25,6 +25,17 @@ O app do turista nas lojas é o `pickgo-web` empacotado com o Capacitor (guia em
 - **Aparelhos**: `PUT /v1/clientes/eu/dispositivos` registra o token de push e `POST /v1/clientes/eu/dispositivos/remover` remove o registro ao sair. Todo aviso transacional do pedido gera um push por aparelho (outbox `push_envio`), enviado pelo FCM no Android e pelo APNs no iOS. Token recusado apaga o aparelho. Sem credenciais, o envio é simulado.
 - **Exclusão da conta**: `DELETE /v1/clientes/eu` apaga nome, CPF, WhatsApp, e-mail, aparelhos e códigos, revoga os aceites, cancela Pix em aberto e derruba o token na hora. Os pedidos ficam anônimos. A exclusão é recusada com pedido pago não retirado. O CPF fica livre para uma conta nova.
 - **Conta da revisão das lojas**: `REVISAO_CPF` e `REVISAO_CODIGO` deixam um CPF entrar com código fixo, sem WhatsApp.
+
+## Vídeos do YouTube com produtos (T20 a T22)
+
+O vídeo fica no YouTube; o Pick & Go guarda quais produtos aparecem nele e em que momento, e cria um link curto por produto (RF-39). Não precisa de chave de API: título e canal vêm do oEmbed público do YouTube.
+
+- **Gestão** (perfil com `campanhas.gerenciar`, aba CRM → Vídeos do YouTube): `POST /v1/videos` com o link (watch, youtu.be, shorts, live) e os produtos com momento (`1:23`) e oferta pública opcional; `PUT /v1/videos/:id/produtos` troca a lista mantendo os códigos já publicados; `PATCH /v1/videos/:id` publica ou arquiva. `GET /v1/videos/:id` traz os links, os resultados por produto e o **texto pronto para o YouTube** (descrição com capítulos e comentário fixado).
+- **Link curto** `GET /v/{codigo}`: conta o clique com a origem (YouTube pelo referer, ou `?o=`) e abre o app em `#turista?v=…&oferta=…`, com o cupom da oferta. Oferta exclusiva de campanha não entra no vídeo, que é público.
+- **No app** (aba Vídeos): player do YouTube (youtube-nocookie), produtos na ordem em que aparecem, botão do momento e "Comprar", que leva o produto, o cupom e a origem para a sacola. `GET /v1/videos/publicados` e `POST /v1/videos/abrir`.
+- **Origem da venda** (RF-31): o pedido grava o produto do vídeo (`video_link` no pedido). Resultados por vídeo e produto: cliques, interessados, pedidos pagos e receita.
+- **Automações**: lembrete único para quem abriu o produto pelo vídeo e não comprou, depois de `LEMBRETE_VIDEO_HORAS` (6 h; 0 desliga), como mensagem de oferta (aceite, PARAR e limite semanal valem); e `POST /v1/videos/:id/campanha` cria a campanha que avisa os clientes, com o link de cada pessoa abrindo o vídeo no app.
+- **Para o app abrir direto pelo link** (RF-40), o domínio público precisa publicar `/.well-known/assetlinks.json` (Android) e `apple-app-site-association` (iOS) com o `br.com.epyx.pickgo`. Sem isso, o link abre a página web.
 
 ## Acesso da equipe (Keycloak)
 

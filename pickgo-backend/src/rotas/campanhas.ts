@@ -225,15 +225,17 @@ export const rotasCampanhas: Modulo = (app, { db, config, agora }) => {
 
   // Link curto da campanha (seção 9.1: GET /l/{codigo}): registra o clique e leva ao app com o cupom.
   app.get<{ Params: { codigo: string } }>('/l/:codigo', async (req, rep) => {
-    const r = await db.query<{ codigo: string | null }>(
+    const r = await db.query<{ codigo: string | null; video: string | null }>(
       `update campanha_envio e set clicou_em = coalesce(e.clicou_em, now()),
          estado = case when e.estado = 'COMPROU' then e.estado else 'CLICOU' end, proximo_passo_em = null
        from campanha c left join oferta o on o.id = c.oferta_id
-       where c.id = e.campanha_id and e.codigo_link = $1 returning o.codigo`,
+       where c.id = e.campanha_id and e.codigo_link = $1
+       returning o.codigo, (select vp.codigo from video_produto vp where vp.video_id = c.video_id order by vp.momento_s, vp.ordem limit 1) as video`,
       [req.params.codigo.slice(0, 40)],
     );
     if (!r.rows[0]) return rep.redirect(`${config.urlApp}/`, 302);
-    const q = new URLSearchParams({ c: req.params.codigo, ...(r.rows[0].codigo ? { oferta: r.rows[0].codigo } : {}) });
+    // Campanha de vídeo: o app abre o vídeo (pelo primeiro produto dele).
+    const q = new URLSearchParams({ c: req.params.codigo, ...(r.rows[0].codigo ? { oferta: r.rows[0].codigo } : {}), ...(r.rows[0].video ? { v: r.rows[0].video } : {}) });
     return rep.redirect(`${config.urlApp}/#turista?${q}`, 302);
   });
 };

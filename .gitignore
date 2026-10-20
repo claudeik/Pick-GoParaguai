@@ -5,3 +5,5 @@ dist/
 .DS_Store
 pickgo-keycloak/.ferramentas/
 pickgo-keycloak/.dados/
+.vercel
+.env*

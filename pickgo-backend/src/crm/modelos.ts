@@ -45,6 +45,11 @@ export const MODELOS = {
     assunto: 'Recebemos sua mensagem',
     texto: (v) => `Recebemos seu pedido de atendimento (chamado ${v.numero}). Respondemos em breve por aqui.`,
   },
+  lembrete_video: {
+    assunto: 'Ainda quer o produto do vídeo?',
+    texto: (v) =>
+      `Oi, ${v.nome}! Vimos que você se interessou por ${v.produto} no vídeo "${v.video}".${v.oferta ? ` ${v.oferta}` : ''} Compre pelo Pix e retire sem fila: ${v.link}\n\nResponda PARAR para não receber mais ofertas.`,
+  },
   codigo_acesso: {
     assunto: 'Seu código de acesso',
     texto: (v) => `Seu código de acesso ao Pick & Go é ${v.codigo}. Vale por 10 minutos. Não compartilhe com ninguém, nem com a nossa equipe.`,

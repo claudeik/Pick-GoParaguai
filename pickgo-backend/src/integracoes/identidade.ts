@@ -61,6 +61,14 @@ const separarNome = (nome: string) => {
 
 // --- Memória ---
 
+/** Equipe do modo demonstração (sem Keycloak): servidor local e demo publicada. */
+export const USUARIOS_DEMO: Omit<NovoUsuario, 'senhaTemporaria'>[] = [
+  { email: 'admin@portalparaguai.com', nome: 'Administração Portal', organizacao: 'PORTAL', loja_id: null, perfil: 'portal-admin' },
+  { email: 'central@portalparaguai.com', nome: 'Diego Benítez', organizacao: 'PORTAL', loja_id: null, perfil: 'portal-central' },
+  { email: 'suporte@epyx.com.br', nome: 'Suporte EPYX', organizacao: 'EPYX', loja_id: null, perfil: 'epyx-suporte' },
+  { email: 'gerente@cellshop.com.py', nome: 'Gerente Cellshop', organizacao: 'LOJA', loja_id: 'cellshop', perfil: 'loja-gerente' },
+];
+
 export class GestorMemoria implements GestorIdentidade {
   readonly tipo = 'memoria' as const;
   private usuarios = new Map<string, UsuarioEquipe & { senha?: string }>();

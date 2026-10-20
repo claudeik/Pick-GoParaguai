@@ -1,0 +1,13 @@
+# Keycloak para máquinas com Docker (mesmo realm do iniciar.sh).
+# Produção: troque start-dev por start, use PostgreSQL, HTTPS e segredos próprios.
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.5
+    command: start-dev --import-realm --http-port=8180
+    ports:
+      - "8180:8180"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    volumes:
+      - ./realm-pickgo.json:/opt/keycloak/data/import/realm-pickgo.json:ro

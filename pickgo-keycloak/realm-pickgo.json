@@ -1,0 +1,460 @@
+{
+  "realm": "pickgo",
+  "displayName": "Portal Paraguai · Pick & Go",
+  "enabled": true,
+  "sslRequired": "external",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "bruteForceProtected": true,
+  "failureFactor": 8,
+  "permanentLockout": false,
+  "maxFailureWaitSeconds": 900,
+  "passwordPolicy": "length(10) and upperCase(1) and lowerCase(1) and digits(1) and specialChars(1) and notUsername(undefined) and passwordHistory(3)",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 28800,
+  "ssoSessionMaxLifespan": 43200,
+  "internationalizationEnabled": true,
+  "supportedLocales": [
+    "pt-BR",
+    "es",
+    "en"
+  ],
+  "defaultLocale": "pt-BR",
+  "roles": {
+    "realm": [
+      {
+        "name": "portal-admin",
+        "description": "[PORTAL] Administrador do Portal: Acesso total: lojas, catálogo, operação, financeiro e usuários de todas as organizações."
+      },
+      {
+        "name": "portal-central",
+        "description": "[PORTAL] Operador da central: Fila de picking, coleta nas lojas, conferência, entrega por QR e ocorrências."
+      },
+      {
+        "name": "portal-atendimento",
+        "description": "[PORTAL] Atendimento do Portal: Consulta pedidos e catálogo e registra ocorrências; não mexe em dinheiro."
+      },
+      {
+        "name": "portal-financeiro",
+        "description": "[PORTAL] Financeiro do Portal: Painel da plataforma, ledger, conciliação e estornos."
+      },
+      {
+        "name": "portal-marketing",
+        "description": "[PORTAL] Marketing do Portal: Público, ofertas por quantidade e tempo limitado, campanhas em cascata e captação de leads."
+      },
+      {
+        "name": "epyx-admin",
+        "description": "[EPYX] Administrador EPYX: Suporte técnico da plataforma, integrações das lojas, financeiro e usuários da EPYX."
+      },
+      {
+        "name": "epyx-suporte",
+        "description": "[EPYX] Suporte EPYX: Acompanha pedidos, catálogo e integrações para dar suporte; não edita dados de negócio."
+      },
+      {
+        "name": "epyx-financeiro",
+        "description": "[EPYX] Financeiro EPYX: Split, ledger e conciliação do Pix e do câmbio."
+      },
+      {
+        "name": "loja-gerente",
+        "description": "[LOJA] Gerente da loja: Tudo da própria loja: catálogo, operação, vendas e a equipe da loja."
+      },
+      {
+        "name": "loja-estoque",
+        "description": "[LOJA] Estoque da loja: Mantém a lista mestre da loja: produtos, preço, estoque e planilha. Não publica no Pick & Go."
+      },
+      {
+        "name": "loja-operador",
+        "description": "[LOJA] Operador da loja: Bancada de teste, separação no balcão e entrega por QR."
+      },
+      {
+        "name": "loja-financeiro",
+        "description": "[LOJA] Financeiro da loja: Vendas, comissões e repasse da loja."
+      },
+      {
+        "name": "portal-almoxarifado",
+        "description": "[PORTAL] Almoxarifado do Portal: Estoque do Portal: itens, depósitos, entradas, saídas, transferências e inventário."
+      }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "pickgo-web",
+      "name": "Pick & Go · painel da equipe",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5180/*",
+        "http://127.0.0.1:5180/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5180",
+        "http://127.0.0.1:5180"
+      ],
+      "rootUrl": "http://localhost:5180",
+      "baseUrl": "/",
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5180/*##http://127.0.0.1:5180/*"
+      },
+      "protocolMappers": [
+        {
+          "name": "organizacao",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "organizacao",
+            "claim.name": "organizacao",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true",
+            "multivalued": "false"
+          }
+        },
+        {
+          "name": "loja_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "loja_id",
+            "claim.name": "loja_id",
+            "jsonType.label": "String",
+            "id.token.claim": "true",
+            "access.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true",
+            "multivalued": "false"
+          }
+        },
+        {
+          "name": "audiencia-api",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "pickgo-api",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "pickgo-api",
+      "name": "Pick & Go · API",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "clientAuthenticatorType": "client-secret",
+      "secret": "dev-pickgo-api-secret-troque-em-producao",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": true,
+      "bearerOnly": false
+    }
+  ],
+  "users": [
+    {
+      "username": "service-account-pickgo-api",
+      "enabled": true,
+      "serviceAccountClientId": "pickgo-api",
+      "clientRoles": {
+        "realm-management": [
+          "manage-users",
+          "view-users",
+          "query-users",
+          "query-groups",
+          "view-realm"
+        ]
+      }
+    },
+    {
+      "username": "admin@portalparaguai.com",
+      "email": "admin@portalparaguai.com",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Administração",
+      "lastName": "Portal",
+      "attributes": {
+        "organizacao": [
+          "PORTAL"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "portal-admin"
+      ]
+    },
+    {
+      "username": "central@portalparaguai.com",
+      "email": "central@portalparaguai.com",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Diego",
+      "lastName": "Benítez",
+      "attributes": {
+        "organizacao": [
+          "PORTAL"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "portal-central"
+      ]
+    },
+    {
+      "username": "atendimento@portalparaguai.com",
+      "email": "atendimento@portalparaguai.com",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Atendimento",
+      "lastName": "Portal",
+      "attributes": {
+        "organizacao": [
+          "PORTAL"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "portal-atendimento"
+      ]
+    },
+    {
+      "username": "marketing@portalparaguai.com",
+      "email": "marketing@portalparaguai.com",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Marketing",
+      "lastName": "Portal",
+      "attributes": {
+        "organizacao": [
+          "PORTAL"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "portal-marketing"
+      ]
+    },
+    {
+      "username": "almoxarifado@portalparaguai.com",
+      "email": "almoxarifado@portalparaguai.com",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Almoxarifado",
+      "lastName": "Portal",
+      "attributes": {
+        "organizacao": [
+          "PORTAL"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "portal-almoxarifado"
+      ]
+    },
+    {
+      "username": "financeiro@portalparaguai.com",
+      "email": "financeiro@portalparaguai.com",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Financeiro",
+      "lastName": "Portal",
+      "attributes": {
+        "organizacao": [
+          "PORTAL"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "portal-financeiro"
+      ]
+    },
+    {
+      "username": "admin@epyx.com.br",
+      "email": "admin@epyx.com.br",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Administração",
+      "lastName": "EPYX",
+      "attributes": {
+        "organizacao": [
+          "EPYX"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "epyx-admin"
+      ]
+    },
+    {
+      "username": "suporte@epyx.com.br",
+      "email": "suporte@epyx.com.br",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Suporte",
+      "lastName": "EPYX",
+      "attributes": {
+        "organizacao": [
+          "EPYX"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "epyx-suporte"
+      ]
+    },
+    {
+      "username": "gerente@cellshop.com.py",
+      "email": "gerente@cellshop.com.py",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Gerente",
+      "lastName": "Cellshop",
+      "attributes": {
+        "organizacao": [
+          "LOJA"
+        ],
+        "loja_id": [
+          "cellshop"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "loja-gerente"
+      ]
+    },
+    {
+      "username": "estoque@cellshop.com.py",
+      "email": "estoque@cellshop.com.py",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Estoque",
+      "lastName": "Cellshop",
+      "attributes": {
+        "organizacao": [
+          "LOJA"
+        ],
+        "loja_id": [
+          "cellshop"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "loja-estoque"
+      ]
+    },
+    {
+      "username": "balcao@nissei.com.py",
+      "email": "balcao@nissei.com.py",
+      "emailVerified": true,
+      "enabled": true,
+      "firstName": "Balcão",
+      "lastName": "Nissei",
+      "attributes": {
+        "organizacao": [
+          "LOJA"
+        ],
+        "loja_id": [
+          "nissei"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "PickGo@2026",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "loja-operador"
+      ]
+    }
+  ],
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "subComponents": {},
+        "config": {
+          "kc.user.profile.config": [
+            "{\"unmanagedAttributePolicy\": \"ADMIN_VIEW\", \"attributes\": [{\"name\": \"username\", \"displayName\": \"${username}\", \"validations\": {\"length\": {\"min\": 3, \"max\": 255}, \"username-prohibited-characters\": {}, \"up-username-not-idn-homograph\": {}}, \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\"]}, \"multivalued\": false}, {\"name\": \"email\", \"displayName\": \"${email}\", \"validations\": {\"email\": {}, \"length\": {\"max\": 255}}, \"required\": {\"roles\": [\"user\"]}, \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\"]}, \"multivalued\": false}, {\"name\": \"firstName\", \"displayName\": \"${firstName}\", \"validations\": {\"length\": {\"max\": 255}, \"person-name-prohibited-characters\": {}}, \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}, \"multivalued\": false}, {\"name\": \"lastName\", \"displayName\": \"${lastName}\", \"validations\": {\"length\": {\"max\": 255}, \"person-name-prohibited-characters\": {}}, \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}, \"multivalued\": false}, {\"name\": \"organizacao\", \"displayName\": \"Organização\", \"validations\": {\"options\": {\"options\": [\"PORTAL\", \"EPYX\", \"LOJA\"]}}, \"permissions\": {\"view\": [\"admin\"], \"edit\": [\"admin\"]}, \"multivalued\": false}, {\"name\": \"loja_id\", \"displayName\": \"Loja\", \"validations\": {\"length\": {\"max\": 60}}, \"permissions\": {\"view\": [\"admin\"], \"edit\": [\"admin\"]}, \"multivalued\": false}], \"groups\": [{\"name\": \"user-metadata\", \"displayHeader\": \"User metadata\", \"displayDescription\": \"Attributes, which refer to user metadata\"}]}"
+          ]
+        }
+      }
+    ]
+  }
+}
